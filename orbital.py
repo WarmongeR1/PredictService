@@ -2,7 +2,7 @@
 import sys
 
 from src.pyorbital.propagator import Propagator
-from src.utils.reader import TleReader
+from src.utils.tlereader import TleReader
 
 """
 python pyorbital.py -i bin/TLEs/dmc.txt -s '2015-01-01 18:21:26'
