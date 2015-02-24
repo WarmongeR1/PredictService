@@ -20,6 +20,7 @@
 # Author: s.gongoragarcia[at]gmail.com
 ##########################################################################
 import datetime
+import os
 import sys
 from os import getenv
 from os import getcwd, chdir
@@ -137,7 +138,10 @@ class Solve_coordinates(object):
 
             if altN > 0:
                 #				n2 = n2 + 3200
-                self.output_data(satellite_name, n2, altN, azN)
+                output_filepath = os.path.join(self.output_folder,
+                                               satellite_name)
+
+                self.output_data(output_filepath, n2, altN, azN)
 
 #			if altN >= 0:
 #			n2 = n2 + 3200

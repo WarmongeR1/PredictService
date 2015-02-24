@@ -20,7 +20,6 @@
 # Author: sapronov.alexander92[at]gmail.com
 ##########################################################################
 import datetime
-from os import getenv
 import os
 import math
 
@@ -30,42 +29,6 @@ import ephem
 import progressbar
 
 from src.utils.reader import TleReader
-
-
-class BasePropagator(object):
-
-    def get_location(self):
-        # todo
-        # вынести в нормальный конфиг
-        open_file = open(getenv("HOME") + '/.predict/predict.qth')
-        lines = open_file.readlines()
-        lines = [item.rstrip('\n') for item in lines]
-
-        lat = lines[1]
-        lon = lines[2]
-        ele = int(lines[3])
-
-        return lon, lat, ele
-
-    def gen_observer(self):
-        observer = ephem.Observer()
-
-        (lon, lat, ele) = self.get_location()
-
-        observer.lon = ephem.degrees(lon)
-        observer.lat = ephem.degrees(lat)
-        observer.elevation = ele
-
-        observer.date = ephem.now()
-        observer.epoch = ephem.now()
-
-        observer.horizon = '0'
-
-        return observer
-
-    def check_create(self, folder):
-        if not os.path.exists(folder):
-            os.makedirs(folder)
 
 
 class Propagator(BasePropagator):
@@ -132,7 +95,7 @@ class Propagator(BasePropagator):
         satellite = self.get_satellite(satellite_name, line1, line2)
 
         iterations = self.end_time - self.start_time
-        iterations = iterations - 1
+        iterations -= 1
 
         n1 = (self.start_time + 2440587.5 * 86400) / 86400 - 2415020
 
@@ -160,18 +123,25 @@ class Propagator(BasePropagator):
             azN = float(repr(satellite.az))
             azN = math.degrees(azN)
             if altN >= 0:
-                self.output_data(satellite_name, UnixTimeN, altN, azN)
+                output_filepath = os.path.join(self.output_folder,
+                                               satellite_name)
+                self.output_data(output_filepath, UnixTimeN, altN, azN)
 
-    def output_data(self, name, time, alt, az):
-        output_filepath = os.path.join(self.output_folder, name)
-        with open(output_filepath, 'a') as file:
-            file.writelines("%d\t" % time)
-            file.writelines("%0.6f\t" % alt)
-            file.writelines("%0.6f\n" % az)
+    def gen_observer(self):
+        observer = ephem.Observer()
 
+        (lon, lat, ele) = self.get_location()
 
-def get_pyemphem_satellite(tle0, tle1, tle2):
-    return ephem.readtle(tle0, tle1, tle2)
+        observer.lon = ephem.degrees(lon)
+        observer.lat = ephem.degrees(lat)
+        observer.elevation = ele
+
+        observer.date = ephem.now()
+        observer.epoch = ephem.now()
+
+        observer.horizon = '0'
+
+        return observer
 
 
 def main():
