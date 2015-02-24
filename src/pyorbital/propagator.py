@@ -24,7 +24,7 @@ import os
 
 from pyorbital.orbital import Orbital
 
-from src.base.basepropagator import BasePropagator
+from src.base.propagator import BasePropagator
 
 
 class Propagator(BasePropagator):

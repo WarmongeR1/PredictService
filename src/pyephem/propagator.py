@@ -24,7 +24,7 @@ import math
 
 import ephem
 
-from src.base.basepropagator import BasePropagator
+from src.base.propagator import BasePropagator
 
 
 class Propagator(BasePropagator):
