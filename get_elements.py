@@ -1,3 +1,10 @@
+from math import degrees
+from os import getcwd, chdir
+
+import ephem
+from ephem import Observer, now
+
+
 class Get_elements:
 
     def __init__(self, file, index):
@@ -5,7 +12,6 @@ class Get_elements:
         self.index = index + 1
         file = str(file)
 
-        from os import chdir, getcwd
         actual_dir = getcwd()
         chdir(actual_dir + '/TLEs')
 
@@ -42,7 +48,6 @@ class Get_elements:
 
     def solve_coordinates(self, satellites, lines1, lines2):
 
-        from ephem import Observer, degrees, now
         self.observer = Observer()
         (lon, lat, ele) = self.get_location()
 
@@ -57,13 +62,13 @@ class Get_elements:
             self.pyephem_routine(satellites[i], lines1[i], lines2[i])
 
     def pyephem_routine(self, name, line1, line2):
-        import ephem
+
         satellite = ephem.readtle(name, line1, line2)
         satellite.compute(self.observer)
 
         # Inclinacion en grados.
         self.inclination = satellite._inc
-        from math import degrees
+
         self.inclination = degrees(self.inclination)
         self.mean_motion = satellite._n
         self.epoch = satellite._epoch
@@ -80,8 +85,6 @@ class Get_elements:
 class Get_name:
 
     def __init__(self, index):
-
-        from os import getcwd, chdir
         actual_dir = getcwd()
 
         chdir(actual_dir + '/results/predict')
@@ -101,7 +104,6 @@ class Get_names:
 
     def __init__(self):
 
-        from os import getcwd, chdir
         actual_dir = getcwd()
 
         chdir(actual_dir + '/results/predict')
@@ -120,8 +122,6 @@ class Get_names:
 class Get_list_length:
 
     def __init__(self):
-
-        from os import getcwd, chdir
 
         actual_dir = getcwd()
         chdir(actual_dir + '/results/predict')

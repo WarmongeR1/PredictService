@@ -1,9 +1,20 @@
+from os import listdir
+
+import sys
+
+if sys.version < '3':
+    import Tkinter as tk
+    from Tkinter import LabelFrame, Radiobutton, LabelFrame
+else:
+    import tkinter as tk
+    from tkinter import LabelFrame, Radiobutton, LabelFrame
+
+import scrolledlist
+
+
 class Window:
 
     def __init__(self):
-
-        import Tkinter as tk
-
         self.root = tk.Tk()
         self.root.geometry("500x400")
         self.root.resizable(0, 0)
@@ -16,7 +27,6 @@ class Window:
         self.root.mainloop()
 
     def site(self):
-        from Tkinter import LabelFrame
         site_frame = LabelFrame(
             self.root,
             height=100,
@@ -29,7 +39,6 @@ class Window:
         site.grid(column=0, row=0, columnspan=1, rowspan=1)
 
     def time(self):
-        from Tkinter import LabelFrame
         time_frame = LabelFrame(
             self.root,
             height=100,
@@ -37,7 +46,6 @@ class Window:
             text="Time settings")
         time_frame.grid(column=1, row=0, columnspan=1, rowspan=1)
 
-        from Tkinter import Radiobutton
         time_now = Radiobutton(time_frame, text="Now", variable=time, value=1)
         time_now.grid(column=0, row=0, columnspan=1, rowspan=1)
         time_selection = Radiobutton(
@@ -51,7 +59,6 @@ class Window:
         # Set time
 
     def families(self):
-        from Tkinter import LabelFrame
         families_frame = LabelFrame(
             self.root,
             height=100,
@@ -59,10 +66,8 @@ class Window:
             text="Family selection")
         families_frame.grid(column=1, row=1, columnspan=1, rowspan=1)
 
-        import scrolledlist
         family = scrolledlist.ScrolledList(families_frame, width=20, height=4)
 
-        from os import listdir
         families = listdir('/home/case/TLEs')
 
         for i in range(len(families)):

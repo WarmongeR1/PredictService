@@ -18,14 +18,17 @@
 ##########################################################################
 # Author: s.gongoragarcia[at]gmail.com
 ##########################################################################
+import datetime
+import sys
+from os import getenv
+from os import getcwd, chdir
+
+import pyorbital.orbital
 
 
 class Do_list:
 
     def __init__(self):
-
-        import sys
-        from os import getcwd
         actual_dir = getcwd()
 
         file = actual_dir + '/TLEs/' + sys.argv[1]
@@ -94,10 +97,6 @@ class Solve_coordinates:
 
     def pyephem_routine(self, satellite_name, line1, line2, i):
 
-        import sys
-        import pyorbital.orbital
-        import datetime
-
         satellite = pyorbital.orbital.Orbital(
             satellite_name,
             line1=line1,
@@ -128,7 +127,7 @@ class Solve_coordinates:
         n2 = start_time
 
         for j in range(iterations):
-            import datetime
+
             n2 = n2 + 1
 
             timeN = datetime.datetime.fromtimestamp(n2)
@@ -152,7 +151,6 @@ class Solve_coordinates:
 
     def output_data(self, name, time, alt, az):
 
-        from os import getcwd, chdir
         script_dir = getcwd()
         chdir(script_dir + '/results/PyOrbital')
 
@@ -164,8 +162,6 @@ class Solve_coordinates:
         chdir(script_dir)
 
     def get_location(self):
-
-        from os import getenv
 
         open_file = open(getenv("HOME") + '/.predict/predict.qth')
         lines = open_file.readlines()

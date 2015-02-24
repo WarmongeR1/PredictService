@@ -19,13 +19,19 @@
 # Author: s.gongoragarcia[at]gmail.com
 ##########################################################################
 
+from os import chdir
+from os import getenv
+from sys import argv
+from os import getcwd
+import sys
+
+import ephem
+import math
+
 
 class Do_list:
 
     def __init__(self):
-
-        from sys import argv
-        from os import getcwd
 
         open_tle = open(getcwd() + '/TLEs/' + argv[1], 'r')
         satellite_list = open_tle.readlines()
@@ -66,8 +72,6 @@ class Solve_coordinates:
 
     def __init__(self, satellites_name, lista_prueba, lista_prueba2):
 
-        import ephem
-
         self.satellites_number = len(satellites_name)
 
         self.observer = ephem.Observer()
@@ -100,10 +104,6 @@ class Solve_coordinates:
 #		bar.finish()
 
     def pyephem_routine(self, satellite_name, line1, line2, i):
-
-        import sys
-        import ephem
-        import math
 
         satellite = ephem.readtle(satellite_name, line1, line2)
         satellite.compute(self.observer)
@@ -150,8 +150,6 @@ class Solve_coordinates:
 
     def output_data(self, name, time, alt, az):
 
-        from os import getcwd, chdir
-
         script_dir = getcwd()
         chdir(script_dir + '/results/PyEphem')
 
@@ -164,8 +162,6 @@ class Solve_coordinates:
         chdir(script_dir)
 
     def get_location(self):
-
-        from os import getenv
 
         open_file = open(getenv("HOME") + '/.predict/predict.qth')
         lines = open_file.readlines()

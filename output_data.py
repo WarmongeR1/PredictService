@@ -21,6 +21,15 @@
 ##########################################################################
 
 
+from os import listdir
+from datetime import datetime
+import csv
+import os
+from os import getcwd, chdir
+
+import numpy
+
+
 class Read_orbitron_data:
 
     def __init__(self, index_satellite, sat_selected, data_dir):
@@ -29,10 +38,7 @@ class Read_orbitron_data:
 
 #		file = '/home/case/Orbitron/Output/output.txt'
 
-        import os.path
-        from os import getcwd
         if os.path.exists(file):
-            from os import getcwd, chdir
             index_satellite = index_satellite + 1
             script_dir = getcwd()
 
@@ -99,7 +105,6 @@ class Read_orbitron_data:
 
     def local_to_unix(self, year, month, day, hour, minute, second):
 
-        from datetime import datetime
         d = datetime(
             int(year),
             int(month),
@@ -117,8 +122,6 @@ class Read_STK_data:
 
     def __init__(self, index_satellite, directorio_datos):
 
-        from os import getcwd, chdir
-
         index_satellite = index_satellite
         script_dir = getcwd()
 
@@ -129,8 +132,6 @@ class Read_STK_data:
         chdir(script_dir)
 
     def open_STK(self, directorio_datos):
-
-        from os import chdir, getcwd, listdir
 
         chdir(directorio_datos)
 
@@ -168,7 +169,6 @@ class Read_STK_data:
         self.STK_alt_satellite = []
         self.STK_az_satellite = []
 
-        import csv
         with open(name, 'rb') as open_file:
             reader = csv.reader(open_file)
             for row in reader:
@@ -186,8 +186,6 @@ class Read_pyephem_data:
 
     def __init__(self, index_satellite):
 
-        import os
-
         index_satellite = index_satellite + 1
         directorio_script = os.getcwd()
 
@@ -198,8 +196,6 @@ class Read_pyephem_data:
         os.chdir(directorio_script)
 
     def open_pyephem(self, directorio_script):
-
-        import os
 
         # PyEphem data
         os.chdir(directorio_script + '/results/PyEphem')
@@ -220,8 +216,6 @@ class Read_pyephem_data:
         self.pyephem_alt_satellite = []
         self.pyephem_az_satellite = []
 
-        import csv
-
         with open(name) as tsv:
             for line in csv.reader(tsv, delimiter="\t"):
                 self.pyephem_simulation_time.append(int(line[0]))
@@ -233,8 +227,6 @@ class Read_predict_data:
 
     def __init__(self, index_satellite):
 
-        import os
-
         index_satellite = index_satellite + 1
         directorio_script = os.getcwd()
 
@@ -245,8 +237,6 @@ class Read_predict_data:
         os.chdir(directorio_script)
 
     def open_predict(self, directorio_script):
-
-        import os
 
         os.chdir(directorio_script + '/results/predict')
 
@@ -265,8 +255,6 @@ class Read_predict_data:
         self.predict_alt_satellite = []
         self.predict_az_satellite = []
 
-        import csv
-
         with open(name) as tsv:
             for line in csv.reader(tsv, delimiter="\t"):
                 if float(line[1]) >= 0:
@@ -279,9 +267,6 @@ class Read_pyorbital_data:
 
     def __init__(self, index_satellite):
 
-        from os import chdir
-        from os import getcwd
-
         index_satellite = index_satellite + 1
         directorio_script = getcwd()
 
@@ -291,8 +276,6 @@ class Read_pyorbital_data:
         chdir(directorio_script)
 
     def open_pyorbital(self, directorio_script, index_satellite):
-
-        from os import chdir, listdir, getcwd
 
         # pyorbital data
         chdir(directorio_script + '/results/PyOrbital')
@@ -316,8 +299,6 @@ class Read_pyorbital_data:
         self.pyorbital_simulation_time = []
         self.pyorbital_alt_satellite = []
         self.pyorbital_az_satellite = []
-
-        import csv
 
         with open(name) as tsv:
             for line in csv.reader(tsv, delimiter="\t"):
@@ -346,13 +327,11 @@ class Read_data:
         self.STK_dir = STK_dir
         self.orbitron_dir = orbitron_dir
 
-        from os import getcwd
         self.directorio_script = getcwd()
 
     def STK_vs_predict(self):
 
         # STK routine
-        from os import getcwd, chdir
         directorio_script = getcwd()
         self.open_STK(self.STK_dir)
         self.open_files_STK(self.index_STK, directorio_script)
@@ -397,7 +376,6 @@ class Read_data:
         # Force mean to zero
         m = 0
 
-        import numpy
         alt = numpy.asarray(list_alt)
         az = numpy.asarray(list_az)
 
@@ -412,7 +390,7 @@ class Read_data:
     def STK_vs_predict_comp(self):
 
         # STK routine
-        from os import getcwd, chdir
+
         directorio_script = getcwd()
         self.open_STK(self.STK_dir)
         self.open_files_STK(self.index_STK, directorio_script)
@@ -460,7 +438,6 @@ class Read_data:
 
     def STK_vs_PyEphem(self):
 
-        from os import chdir
         chdir(self.directorio_script)
 
         object_pyephem = Read_pyephem_data(self.index_pyephem)
@@ -509,7 +486,6 @@ class Read_data:
         # Force mean to zero
         m = 0
 
-        import numpy
         alt = numpy.asarray(list_alt)
         az = numpy.asarray(list_az)
 
@@ -524,13 +500,12 @@ class Read_data:
     def STK_vs_PyEphem_comp(self):
 
         # STK routine
-        from os import getcwd, chdir
+
         directorio_script = getcwd()
         self.open_STK(self.STK_dir)
         self.open_files_STK(self.index_STK, directorio_script)
         chdir(directorio_script)
 
-        from os import chdir
         chdir(self.directorio_script)
 
         object_pyephem = Read_pyephem_data(self.index_pyephem)
@@ -582,7 +557,6 @@ class Read_data:
 
     def STK_vs_PyOrbital(self):
 
-        from os import chdir
         chdir(self.directorio_script)
 
         object_pyorbital = Read_pyorbital_data(self.index_pyorbital)
@@ -631,7 +605,6 @@ class Read_data:
         # Force mean to zero
         m = 0
 
-        import numpy
         alt = numpy.asarray(list_alt)
         az = numpy.asarray(list_az)
 
@@ -646,13 +619,11 @@ class Read_data:
     def STK_vs_PyOrbital_comp(self):
 
         # STK routine
-        from os import getcwd, chdir
         directorio_script = getcwd()
         self.open_STK(self.STK_dir)
         self.open_files_STK(self.index_STK, directorio_script)
         chdir(directorio_script)
 
-        from os import chdir
         chdir(self.directorio_script)
 
         object_pyorbital = Read_pyorbital_data(self.index_pyorbital)
@@ -748,7 +719,6 @@ class Read_data:
         # Force mean to zero
         m = 0
 
-        import numpy
         alt = numpy.asarray(list_alt)
         az = numpy.asarray(list_az)
 
@@ -761,13 +731,11 @@ class Read_data:
     def STK_vs_Orbitron_comp(self):
 
         # STK routine
-        from os import getcwd, chdir
         directorio_script = getcwd()
         self.open_STK(self.STK_dir)
         self.open_files_STK(self.index_STK, directorio_script)
         chdir(directorio_script)
 
-        from os import chdir
         chdir(self.directorio_script)
 
         object_orbitron = Read_orbitron_data(
@@ -816,7 +784,6 @@ class Read_data:
     # predict data
     def open_predict(self, script_dir):
 
-        from os import chdir, getcwd, listdir
         chdir(script_dir + '/results/predict')
 
         self.files_predict = listdir(getcwd())
@@ -834,8 +801,6 @@ class Read_data:
         self.predict_alt_satellite = []
         self.predict_az_satellite = []
 
-        import csv
-
         with open(name) as tsv:
             for line in csv.reader(tsv, delimiter="\t"):
                 self.predict_simulation_time.append(int(line[0]))
@@ -843,8 +808,6 @@ class Read_data:
                 self.predict_az_satellite.append(float(line[2]))
 
     def open_STK(self, directorio_datos):
-
-        from os import chdir, getcwd, listdir
 
         chdir(directorio_datos)
 
@@ -876,7 +839,6 @@ class Read_data:
         self.STK_alt_satellite = []
         self.STK_az_satellite = []
 
-        import csv
         with open(name, 'rb') as open_file:
             reader = csv.reader(open_file)
             for row in reader:
@@ -897,7 +859,6 @@ class Check_data:
         index = index_satellite + 1
         satellite_name = "SAT%s" % (index)
 
-        from os import getcwd, chdir
         self.directorio_actual = getcwd()
 
         self.check_predict(index_satellite, satellite_name)
@@ -910,7 +871,6 @@ class Check_data:
 
     def check_predict(self, index, satellite_name):
 
-        from os import chdir, listdir, getcwd
         chdir(self.directorio_actual + '/results/predict')
 
         files = listdir(getcwd())
@@ -922,7 +882,6 @@ class Check_data:
 
     def check_pyephem(self, index, satellite_name):
 
-        from os import chdir, listdir, getcwd
         chdir(self.directorio_actual + '/results/PyEphem')
 
         files = listdir(getcwd())
@@ -934,7 +893,6 @@ class Check_data:
 
     def check_pyorbital(self, index, satellite_name):
 
-        from os import chdir, listdir, getcwd
         chdir(self.directorio_actual + '/results/PyOrbital')
 
         files = listdir(getcwd())

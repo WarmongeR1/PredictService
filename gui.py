@@ -19,6 +19,25 @@
 ##########################################################################
 # Author: s.gongoragarcia[at]gmail.com
 ##########################################################################
+import sys
+
+if sys.version < '3':
+    from tkFileDialog import asksaveasfile
+    import tkMessageBox
+    import Tkinter as tk
+else:
+    from tkinter.filedialog import asksaveasfile
+    import tkinter.messagebox as tkMessageBox
+    import tkinter as tk
+
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
+    NavigationToolbar2TkAgg
+import get_elements
+from sys import argv
+import output_data
+import scrolledlist
+from output_data import Read_data, Check_data
 
 
 class GUI:
@@ -32,7 +51,6 @@ class GUI:
         self.STK = 0
         self.orbitron = 0
 
-        import get_elements
         object_elements = get_elements.Get_list_length()
         self.length = object_elements.length - 1
 
@@ -41,12 +59,7 @@ class GUI:
     def widgets(self):
 
         # Satellite name
-        import get_elements
         self.object_name = get_elements.Get_name(self.index)
-
-        import Tkinter as tk
-        from matplotlib.figure import Figure
-        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 
         # Default
         available_predict = 'no'
@@ -55,8 +68,6 @@ class GUI:
         available_orbitron = 'no'
         available_STK = 'no'
 
-        import output_data
-        from sys import argv
         actual_available = output_data.Check_data(
             self.index,
             self.object_name.name,
@@ -113,7 +124,6 @@ class GUI:
                 pyorbital_time, pyorbital_az, 'y', label="pyorbital")
 
         if available_orbitron == 'yes':
-            from sys import argv
             print(argv[4])
             figure_orbitron = output_data.Read_orbitron_data(
                 self.orbitron,
@@ -149,7 +159,6 @@ class GUI:
         # Grid is on
         self.b.grid(True)
 
-        import Tkinter as tk
         left_frame = tk.Frame(root, height=800, width=500, padx=5, pady=5)
         left_frame.grid(column=0, row=0, columnspan=1, rowspan=3)
 
@@ -211,7 +220,6 @@ class GUI:
         label_name.grid(column=0, row=0, columnspan=1, rowspan=1, sticky=tk.W)
 
         self.text_name = tk.StringVar()
-        import get_elements
         object_name = get_elements.Get_name(self.index)
         self.text_name.set(object_name.name)
 
@@ -219,7 +227,6 @@ class GUI:
         name.grid(column=1, row=0, columnspan=1, rowspan=1, sticky=tk.E)
 
         # Inclination
-        from sys import argv
         elements = get_elements.Get_elements(argv[1], self.index)
         label_incl = tk.Label(data_frame, text="Inclination")
         label_incl.grid(column=2, row=0, columnspan=1, rowspan=1, sticky=tk.W)
@@ -259,7 +266,7 @@ class GUI:
         label_sims.grid(column=0, row=2, columnspan=2, rowspan=1, sticky=tk.W)
 
         # Generate data
-        import scrolledlist
+
         sims_availables = scrolledlist.ScrolledList(
             data_frame,
             width=16,
@@ -504,11 +511,8 @@ class GUI:
 
         self.index = self.index + 1
 
-        import get_elements
         self.object_name = get_elements.Get_name(self.index)
 
-        import output_data
-        from sys import argv
         available = output_data.Check_data(
             self.index,
             self.object_name.name,
@@ -546,7 +550,6 @@ class GUI:
         available_orbitron = actual_available.orbitron
         available_STK = actual_available.STK
 
-        import get_elements
         object_name = get_elements.Get_name(self.index)
 
         self.text.set_text(object_name.name)
@@ -590,7 +593,6 @@ class GUI:
             self.plot_pyorbital_az.set_xdata(pyorbital_time)
 
         if available_orbitron == 'yes':
-            from sys import argv
             figure_orbitron = output_data.Read_orbitron_data(self.orbitron,
                                                              self.object_name.name, argv[4])
 
@@ -635,11 +637,8 @@ class GUI:
 
         self.index = self.index - 1
 
-        import get_elements
         self.object_name = get_elements.Get_name(self.index)
 
-        import output_data
-        from sys import argv
         available = output_data.Check_data(
             self.index,
             self.object_name.name,
@@ -662,7 +661,6 @@ class GUI:
         if available_STK == 'yes':
             self.STK = self.STK - 1
 
-        import output_data
         figure = output_data.Read_data(self.pyephem, self.predict, self.pyorbital,
                                        self.orbitron, self.object_name.name, self.STK, argv[3], argv[4])
 
@@ -678,7 +676,6 @@ class GUI:
         available_orbitron = actual_available.orbitron
         available_STK = actual_available.STK
 
-        import get_elements
         object_name = get_elements.Get_name(self.index)
 
         self.text.set_text(object_name.name)
@@ -720,7 +717,6 @@ class GUI:
             self.plot_pyorbital_az.set_xdata(pyorbital_time)
 
         if available_orbitron == 'yes':
-            from sys import argv
             figure_orbitron = output_data.Read_orbitron_data(self.orbitron,
                                                              self.object_name.name, argv[4])
 
@@ -785,8 +781,6 @@ class GUI:
 
     def pick_simulation(self, index):
 
-        from output_data import Read_data
-        from sys import argv
         comparation = Read_data(self.pyephem, self.predict, self.pyorbital,
                                 self.orbitron, self.object_name.name, self.STK, argv[3], argv[4])
 
@@ -896,7 +890,6 @@ class GUI:
 
     def save_routine(self):
 
-        from tkFileDialog import asksaveasfile
         f = asksaveasfile(mode='w', defaultextension=".txt")
         # asksaveasfile return `None` if dialog closed with "cancel".
         if f is None:
@@ -909,7 +902,6 @@ class GUI:
 
     def save_data(self):
 
-        import tkMessageBox
         tkMessageBox.showinfo(
             "Wait until simulations end.",
             "This could take a while.")
@@ -919,19 +911,15 @@ class GUI:
 
         text = []
         text.append("==================================")
-        from sys import argv
         text.append(" Family %s" % (argv[1]))
         text.append("==================================")
 
         for i in range(self.length):
 
-            import get_elements
             object_name = get_elements.Get_name(i)
 
             text.append(" Satellite: %s" % (object_name.name))
 
-            from sys import argv
-            from output_data import Check_data
             actual_available = Check_data(
                 index,
                 object_name.name,
@@ -946,8 +934,6 @@ class GUI:
                 available_pyorbital = actual_available.pyorbital
                 available_orbitron = actual_available.orbitron
 
-                from output_data import Read_data
-                from sys import argv
                 data = Read_data(index, index, index,
                                  index, self.object_name.name, index, argv[3], argv[4])
 
@@ -1020,9 +1006,6 @@ class GUI:
 
     def std_simulations(self):
 
-        from output_data import Read_data
-        from sys import argv
-
         # predict
         data = Read_data(self.pyephem, self.predict, self.pyorbital,
                          self.orbitron, self.object_name.name, self.STK, argv[3], argv[4])
@@ -1054,7 +1037,6 @@ class GUI:
 
 
 if __name__ == '__main__':
-    import Tkinter as tk
     root = tk.Tk()
     interfaz = GUI()
     root.title("Simulaciones")

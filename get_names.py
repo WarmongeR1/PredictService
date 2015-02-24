@@ -20,13 +20,13 @@
 # Author: s.gongoragarcia[at]gmail.com
 ##########################################################################
 
+import os
+import sys
+
 
 class Get_names:
 
     def __init__(self):
-
-        import os
-        import sys
 
         current_dir = os.getcwd()
 
@@ -56,7 +56,6 @@ class Get_names:
 
     def save_list(self, list):
 
-        import os
         current_dir = os.getcwd()
 
         # PyEphem

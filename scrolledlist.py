@@ -7,8 +7,11 @@
 #================================================================
 # Imports
 #----------------------------------------------------------------
-
-from Tkinter import *
+import sys
+if sys.version < '3':
+    from Tkinter import *
+else:
+    from tkinter import *
 
 #================================================================
 # Manifest constants
