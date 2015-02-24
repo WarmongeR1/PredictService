@@ -14,6 +14,7 @@ else:
 
 from src.gui.scrolledlist import ScrolledList
 
+
 class Window(object):
 
     def __init__(self):

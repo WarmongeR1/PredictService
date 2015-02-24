@@ -2,3 +2,4 @@ pyephem
 matplotlib
 pyorbital
 
+git+https://github.com/WarmongeR1/python-progressbar.git

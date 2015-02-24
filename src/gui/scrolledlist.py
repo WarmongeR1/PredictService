@@ -89,7 +89,6 @@ class ScrolledList(Frame):
             self.listbox["yscrollcommand"] = self.vScrollbar.set
             self.vScrollbar["command"] = self.listbox.yview
 
-
         # [ if self.hscroll ->
         #     self.listbox  :=  self.listbox linked so that
         #         self.hScrollbar can reposition it ]
