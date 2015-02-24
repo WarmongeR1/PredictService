@@ -1,5 +1,5 @@
 
-################################################################################
+##########################################################################
 # Copyright 2014 Samuel Gongora Garcia (s.gongoragarcia@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,171 +15,178 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-################################################################################
+##########################################################################
 # Author: s.gongoragarcia[at]gmail.com
-################################################################################
+##########################################################################
 
 
 class Do_list:
 
-	def __init__(self):
+    def __init__(self):
 
-		from sys import argv
-		from os import getcwd
+        from sys import argv
+        from os import getcwd
 
-		open_tle = open(getcwd() + '/TLEs/' + argv[1], 'r')
-		satellite_list = open_tle.readlines()
-		satellite_list = [item.rstrip('\n') for item in satellite_list]
+        open_tle = open(getcwd() + '/TLEs/' + argv[1], 'r')
+        satellite_list = open_tle.readlines()
+        satellite_list = [item.rstrip('\n') for item in satellite_list]
 
-		length_list = len(satellite_list)
-		y = length_list/3
+        length_list = len(satellite_list)
+        y = length_list / 3
 
-		list_numbers = map(self.return_list, range(y))
-		
-		self.show_satellite_list = []
-		self.tle_first_line_list = []
-		self.tle_second_line_list = []
-		i = 0
-		j = 1
-		k = 2
+        list_numbers = map(self.return_list, range(y))
 
-		for i in range(len(list_numbers)):
-			self.show_satellite_list.append(satellite_list[list_numbers[i]])
-			self.tle_first_line_list.append(satellite_list[j])
-			self.tle_second_line_list.append(satellite_list[k])
-			j = list_numbers[i] + 4
-			k = list_numbers[i] + 5				
-			
-		# Funcion para sacar los valores de la clase
-		self.return_values()
+        self.show_satellite_list = []
+        self.tle_first_line_list = []
+        self.tle_second_line_list = []
+        i = 0
+        j = 1
+        k = 2
 
-	def return_list(self, x):
-		return 3*x
+        for i in range(len(list_numbers)):
+            self.show_satellite_list.append(satellite_list[list_numbers[i]])
+            self.tle_first_line_list.append(satellite_list[j])
+            self.tle_second_line_list.append(satellite_list[k])
+            j = list_numbers[i] + 4
+            k = list_numbers[i] + 5
 
-	def return_values(self):
-		return self.show_satellite_list
-		return self.tle_first_line_list
-		return self.tle_second_line_list
+        # Funcion para sacar los valores de la clase
+        self.return_values()
+
+    def return_list(self, x):
+        return 3 * x
+
+    def return_values(self):
+        return self.show_satellite_list
+        return self.tle_first_line_list
+        return self.tle_second_line_list
+
 
 class Solve_coordinates:
 
-	def __init__(self, satellites_name, lista_prueba, lista_prueba2):
-	
-		import ephem
-		import sys
-		import os
+    def __init__(self, satellites_name, lista_prueba, lista_prueba2):
 
-		self.satellites_number = len(satellites_name)
+        import ephem
+        import sys
+        import os
 
-		self.observer = ephem.Observer()
-		
-		(lon, lat, ele) = self.get_location()
+        self.satellites_number = len(satellites_name)
 
-		self.observer.lon = ephem.degrees(lon)
-		self.observer.lat = ephem.degrees(lat)
-		self.observer.elevation = ele
+        self.observer = ephem.Observer()
 
-		self.observer.date = ephem.now()
-		self.observer.epoch = ephem.now() 
+        (lon, lat, ele) = self.get_location()
 
-		self.observer.horizon = '0'
+        self.observer.lon = ephem.degrees(lon)
+        self.observer.lat = ephem.degrees(lat)
+        self.observer.elevation = ele
 
-		# TO-DO
+        self.observer.date = ephem.now()
+        self.observer.epoch = ephem.now()
+
+        self.observer.horizon = '0'
+
+        # TO-DO
 #		import progressbar
 #		bar = progressbar.ProgressBar(maxval=len(satellites_name), widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
 
-		# Provide data to pyephem_routine
-		for i in range(len(satellites_name)):
-			self.pyephem_routine(satellites_name[i], lista_prueba[i], lista_prueba2[i], i)
-			i = i + 1
+        # Provide data to pyephem_routine
+        for i in range(len(satellites_name)):
+            self.pyephem_routine(
+                satellites_name[i],
+                lista_prueba[i],
+                lista_prueba2[i],
+                i)
+            i = i + 1
 #			bar.update(i+1)
 
 #		bar.finish()
-		
 
-	def pyephem_routine(self, satellite_name, line1, line2, i):
+    def pyephem_routine(self, satellite_name, line1, line2, i):
 
-		import sys
-		import ephem
-		import math
-	
-		satellite = ephem.readtle(satellite_name, line1, line2)
-		satellite.compute(self.observer)
+        import sys
+        import ephem
+        import math
 
-		start_time = int(sys.argv[2])
-		end_time = int(sys.argv[3])
+        satellite = ephem.readtle(satellite_name, line1, line2)
+        satellite.compute(self.observer)
 
-		iterations = end_time - start_time
-		iterations = iterations - 1
+        start_time = int(sys.argv[2])
+        end_time = int(sys.argv[3])
 
-		n1 = (start_time + 2440587.5*86400)/86400 - 2415020
+        iterations = end_time - start_time
+        iterations = iterations - 1
 
-		self.observer.date = n1
+        n1 = (start_time + 2440587.5 * 86400) / 86400 - 2415020
 
-		satellite.compute(self.observer)
-		alt1 = float(repr(satellite.alt))
-		alt1 = math.degrees(alt1)
-		az1 = float(repr(satellite.az))
-		az1 = math.degrees(az1)
-		if alt1 >= 0:
-			self.output_data(satellite_name, start_time, alt1, az1)
+        self.observer.date = n1
 
-		for j in range(iterations):
-			time = ephem.Date(self.observer.date + ephem.second)
-			self.observer.date = time
-			
-			# UNIX Time
-			UnixTimeN = float(time)
-			UnixTimeN = int((UnixTimeN - 25567.5)*86400)
+        satellite.compute(self.observer)
+        alt1 = float(repr(satellite.alt))
+        alt1 = math.degrees(alt1)
+        az1 = float(repr(satellite.az))
+        az1 = math.degrees(az1)
+        if alt1 >= 0:
+            self.output_data(satellite_name, start_time, alt1, az1)
 
-			satellite.compute(self.observer)
-			altN = float(repr(satellite.alt))
-			altN = math.degrees(altN)
-			azN = float(repr(satellite.az))
-			azN = math.degrees(azN)
-			if altN >= 0:
-				self.output_data(satellite_name, UnixTimeN, altN, azN)
+        for j in range(iterations):
+            time = ephem.Date(self.observer.date + ephem.second)
+            self.observer.date = time
 
-			j = j + 1
-		i = i + 1
-		print "PyEphem - Simulation [%s/%d] done!" %(i, self.satellites_number)
+            # UNIX Time
+            UnixTimeN = float(time)
+            UnixTimeN = int((UnixTimeN - 25567.5) * 86400)
 
-	def output_data(self, name, time, alt, az):
+            satellite.compute(self.observer)
+            altN = float(repr(satellite.alt))
+            altN = math.degrees(altN)
+            azN = float(repr(satellite.az))
+            azN = math.degrees(azN)
+            if altN >= 0:
+                self.output_data(satellite_name, UnixTimeN, altN, azN)
 
-		from os import getcwd, chdir
+            j = j + 1
+        i = i + 1
+        print(
+            "PyEphem - Simulation [%s/%d] done!" %
+            (i, self.satellites_number))
 
-		script_dir = getcwd()
-		chdir(script_dir + '/results/PyEphem')
+    def output_data(self, name, time, alt, az):
 
-		create_file = open(name, 'a')
-		create_file.writelines("%d\t" % time)
-		create_file.writelines("%0.6f\t" % alt)
-		create_file.writelines("%0.6f\n" % az)
-		create_file.close
+        from os import getcwd, chdir
 
-		chdir(script_dir)
+        script_dir = getcwd()
+        chdir(script_dir + '/results/PyEphem')
 
-	def get_location(self):
+        create_file = open(name, 'a')
+        create_file.writelines("%d\t" % time)
+        create_file.writelines("%0.6f\t" % alt)
+        create_file.writelines("%0.6f\n" % az)
+        create_file.close()
 
-		from os import getenv
+        chdir(script_dir)
 
-		open_file = open(getenv("HOME") + '/.predict/predict.qth')
-		lines = open_file.readlines()
-		lines = [item.rstrip('\n') for item in lines]
+    def get_location(self):
 
-		site = lines[0]
-		lat = lines[1]
-		lon = lines[2]
-		ele = int(lines[3])
+        from os import getenv
 
-		return lon, lat, ele
+        open_file = open(getenv("HOME") + '/.predict/predict.qth')
+        lines = open_file.readlines()
+        lines = [item.rstrip('\n') for item in lines]
+
+        site = lines[0]
+        lat = lines[1]
+        lon = lines[2]
+        ele = int(lines[3])
+
+        return lon, lat, ele
 
 if __name__ == '__main__':
-	print ""
-	print "PyEphem data"
-	do_list = Do_list()
+    print()
+    print("PyEphem data")
+    do_list = Do_list()
 
-	# Time will be in UNIX units
-	solve_coordinates = Solve_coordinates(do_list.show_satellite_list, do_list.tle_first_line_list, do_list.tle_second_line_list)
-
-
+    # Time will be in UNIX units
+    solve_coordinates = Solve_coordinates(
+        do_list.show_satellite_list,
+        do_list.tle_first_line_list,
+        do_list.tle_second_line_list)

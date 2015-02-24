@@ -1,0 +1,5 @@
+pyephem
+matplotlib
+pyorbital
+
+Tkinter

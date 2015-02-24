@@ -1,6 +1,6 @@
 
 
-################################################################################
+##########################################################################
 # Copyright 2014 Samuel Gongora Garcia (s.gongoragarcia@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,76 +16,76 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-################################################################################
+##########################################################################
 # Author: s.gongoragarcia[at]gmail.com
-################################################################################
+##########################################################################
 
 
 class Get_names:
-	
-	def __init__(self):
 
-		import os
-		import sys
+    def __init__(self):
 
-		current_dir = os.getcwd()
+        import os
+        import sys
 
-		os.chdir(current_dir + '/TLEs')
+        current_dir = os.getcwd()
 
-		open_tle = open(sys.argv[1], 'r')
-		names_list = open_tle.readlines()
-		names_list = [item.rstrip('\n') for item in names_list] 
+        os.chdir(current_dir + '/TLEs')
 
-		os.chdir(current_dir)
+        open_tle = open(sys.argv[1], 'r')
+        names_list = open_tle.readlines()
+        names_list = [item.rstrip('\n') for item in names_list]
 
-		size_list = len(names_list)
-		y = size_list/3
+        os.chdir(current_dir)
 
-		list_numbers = map(self.return_list, range(y))
+        size_list = len(names_list)
+        y = size_list / 3
 
-		satellites_list = []
-		i = 0
+        list_numbers = map(self.return_list, range(y))
 
-		for i in range(len(list_numbers)):
-			satellites_list.append(names_list[list_numbers[i]])
+        satellites_list = []
+        i = 0
 
-		self.save_list(satellites_list)
+        for i in range(len(list_numbers)):
+            satellites_list.append(names_list[list_numbers[i]])
 
-        def return_list(self, x):
-                return 3*x
+        self.save_list(satellites_list)
 
-	def save_list(self, list):
+    def return_list(self, x):
+        return 3 * x
 
-		import os
-		current_dir = os.getcwd()
+    def save_list(self, list):
 
-		# PyEphem
-		os.chdir(current_dir + '/results/PyEphem')
+        import os
+        current_dir = os.getcwd()
 
-		create_file_pyephem = open('temp', 'w')
-		create_file_pyephem.writelines(["%s\n" % item  for item in list])
+        # PyEphem
+        os.chdir(current_dir + '/results/PyEphem')
 
-		# predict
-		os.chdir(current_dir + '/results/predict')
+        create_file_pyephem = open('temp', 'w')
+        create_file_pyephem.writelines(["%s\n" % item for item in list])
 
-		create_file_predict = open('temp', 'w')
-		create_file_predict.writelines(["%s\n" % item  for item in list])
+        # predict
+        os.chdir(current_dir + '/results/predict')
 
-		# pyorbital
-		os.chdir(current_dir)
-		os.chdir(current_dir + '/results/PyOrbital')
+        create_file_predict = open('temp', 'w')
+        create_file_predict.writelines(["%s\n" % item for item in list])
 
-		create_file_pyorbital = open('temp', 'w')
-		create_file_pyorbital.writelines(["%s\n" % item for item in list])
+        # pyorbital
+        os.chdir(current_dir)
+        os.chdir(current_dir + '/results/PyOrbital')
 
-		# Orbitron
-		os.chdir(current_dir)
-		os.chdir(current_dir + '/results/Orbitron')
-		
-		create_file_orbitron = open('temp', 'w')
-		create_file_orbitron.writelines(["%s\n" % item for item in list])
+        create_file_pyorbital = open('temp', 'w')
+        create_file_pyorbital.writelines(["%s\n" % item for item in list])
 
-		os.chdir(current_dir)
+        # Orbitron
+        os.chdir(current_dir)
+        os.chdir(current_dir + '/results/Orbitron')
+
+        create_file_orbitron = open('temp', 'w')
+        create_file_orbitron.writelines(["%s\n" % item for item in list])
+
+        os.chdir(current_dir)
 
 if __name__ == '__main__':
-	get_name = Get_names()
+    get_name = Get_names()
