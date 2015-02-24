@@ -14,7 +14,7 @@ else:
 import scrolledlist
 
 
-class Window:
+class Window(object):
 
     def __init__(self):
         self.root = tk.Tk()

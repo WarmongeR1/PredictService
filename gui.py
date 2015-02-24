@@ -27,7 +27,6 @@ if sys.version < '3':
     import tkinter as tk
 else:
     from tkinter.filedialog import asksaveasfile
-    import tkinter.messagebox as tkMessageBox
     import tkinter as tk
 
 from matplotlib.figure import Figure

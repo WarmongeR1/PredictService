@@ -30,7 +30,7 @@ import ephem
 import math
 
 
-class Do_list:
+class Do_list(object):
 
     def __init__(self):
 
@@ -69,7 +69,7 @@ class Do_list:
         return self.tle_second_line_list
 
 
-class Solve_coordinates:
+class Solve_coordinates(object):
 
     def __init__(self, satellites_name, lista_prueba, lista_prueba2):
 

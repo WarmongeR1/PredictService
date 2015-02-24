@@ -27,7 +27,7 @@ from os import getcwd, chdir
 import pyorbital.orbital
 
 
-class Do_list:
+class Do_list(object):
 
     def __init__(self):
         actual_dir = getcwd()
@@ -73,7 +73,7 @@ class Do_list:
         return self.mostrar_lista_linea2
 
 
-class Solve_coordinates:
+class Solve_coordinates(object):
 
     def __init__(self, lista_elementos, lista_prueba, lista_prueba2):
 

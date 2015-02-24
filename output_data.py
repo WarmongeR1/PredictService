@@ -30,7 +30,7 @@ from os import getcwd, chdir
 import numpy
 
 
-class Read_orbitron_data:
+class Read_orbitron_data(object):
 
     def __init__(self, index_satellite, sat_selected, data_dir):
 
@@ -118,7 +118,7 @@ class Read_orbitron_data:
         return unix_time
 
 
-class Read_STK_data:
+class Read_STK_data(object):
 
     def __init__(self, index_satellite, directorio_datos):
 
@@ -182,7 +182,7 @@ class Read_STK_data:
                     pass
 
 
-class Read_pyephem_data:
+class Read_pyephem_data(object):
 
     def __init__(self, index_satellite):
 
@@ -223,7 +223,7 @@ class Read_pyephem_data:
                 self.pyephem_az_satellite.append(float(line[2]))
 
 
-class Read_predict_data:
+class Read_predict_data(object):
 
     def __init__(self, index_satellite):
 
@@ -263,7 +263,7 @@ class Read_predict_data:
                     self.predict_az_satellite.append(float(line[2]))
 
 
-class Read_pyorbital_data:
+class Read_pyorbital_data(object):
 
     def __init__(self, index_satellite):
 
@@ -307,7 +307,7 @@ class Read_pyorbital_data:
                 self.pyorbital_az_satellite.append(float(line[2]))
 
 
-class Read_data:
+class Read_data(object):
 
     def __init__(self, index_pyephem, index_predict, index_pyorbital,
                  index_orbitron, sat_selected, index_STK, STK_dir, orbitron_dir):
@@ -852,7 +852,7 @@ class Read_data:
                     pass
 
 
-class Check_data:
+class Check_data(object):
 
     def __init__(self, index_satellite, sat_name, STK_folder, Orbitron_folder):
 

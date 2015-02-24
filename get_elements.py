@@ -7,7 +7,7 @@ import ephem
 from ephem import Observer, now
 
 
-class Get_elements:
+class Get_elements(object):
 
     def __init__(self, file, index):
 
@@ -84,7 +84,7 @@ class Get_elements:
         return lon, lat, ele
 
 
-class Get_name:
+class Get_name(object):
 
     def __init__(self, index):
         actual_dir = getcwd()
@@ -102,7 +102,7 @@ class Get_name:
         chdir(actual_dir)
 
 
-class Get_names:
+class Get_names(object):
 
     def __init__(self):
 
@@ -121,7 +121,7 @@ class Get_names:
         chdir(actual_dir)
 
 
-class Get_list_length:
+class Get_list_length(object):
 
     def __init__(self):
 

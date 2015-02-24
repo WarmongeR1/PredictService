@@ -24,7 +24,7 @@ import os
 import sys
 
 
-class Get_names:
+class Get_names(object):
 
     def __init__(self):
 
