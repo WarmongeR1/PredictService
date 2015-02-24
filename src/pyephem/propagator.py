@@ -27,6 +27,7 @@ from dateconv import d2u
 
 import ephem
 import progressbar
+from src.base.basepropagator import BasePropagator
 
 from src.utils.reader import TleReader
 
