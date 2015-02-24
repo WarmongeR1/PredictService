@@ -22,9 +22,9 @@
 import sys
 
 if sys.version < '3':
-    from tkFileDialog import asksaveasfile
-    import tkMessageBox
-    import Tkinter as tk
+    from tkinter.filedialog import asksaveasfile
+    import tkinter.messagebox
+    import tkinter as tk
 else:
     from tkinter.filedialog import asksaveasfile
     import tkinter.messagebox as tkMessageBox
@@ -124,7 +124,7 @@ class GUI:
                 pyorbital_time, pyorbital_az, 'y', label="pyorbital")
 
         if available_orbitron == 'yes':
-            print(argv[4])
+            print((argv[4]))
             figure_orbitron = output_data.Read_orbitron_data(
                 self.orbitron,
                 self.object_name.name,
@@ -507,7 +507,7 @@ class GUI:
             self.forward.configure(state=tk.NORMAL)
             self.next.configure(state=tk.NORMAL)
 
-    def next(self):
+    def __next__(self):
 
         self.index = self.index + 1
 
@@ -902,7 +902,7 @@ class GUI:
 
     def save_data(self):
 
-        tkMessageBox.showinfo(
+        tkinter.messagebox.showinfo(
             "Wait until simulations end.",
             "This could take a while.")
 
@@ -989,7 +989,7 @@ class GUI:
 
             elif available_STK == 'no':
 
-                print("Data don't available %s" % (i))
+                print(("Data don't available %s" % (i)))
 
             else:
 

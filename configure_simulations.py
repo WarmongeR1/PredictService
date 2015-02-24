@@ -5,8 +5,8 @@ from os import listdir
 import sys
 
 if sys.version < '3':
-    import Tkinter as tk
-    from Tkinter import LabelFrame, Radiobutton, LabelFrame
+    import tkinter as tk
+    from tkinter import LabelFrame, Radiobutton, LabelFrame
 else:
     import tkinter as tk
     from tkinter import LabelFrame, Radiobutton, LabelFrame

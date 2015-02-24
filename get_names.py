@@ -41,7 +41,7 @@ class Get_names:
         size_list = len(names_list)
         y = size_list / 3
 
-        list_numbers = map(self.return_list, range(y))
+        list_numbers = list(map(self.return_list, list(range(y))))
 
         satellites_list = []
         i = 0

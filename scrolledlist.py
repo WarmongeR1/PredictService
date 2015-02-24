@@ -11,7 +11,7 @@
 #----------------------------------------------------------------
 import sys
 if sys.version < '3':
-    from Tkinter import *
+    from tkinter import *
 else:
     from tkinter import *
 

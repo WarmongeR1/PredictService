@@ -41,7 +41,7 @@ class Do_list:
         length_list = len(satellite_list)
         y = length_list / 3
 
-        list_numbers = map(self.return_list, range(y))
+        list_numbers = list(map(self.return_list, list(range(y))))
 
         self.show_satellite_list = []
         self.tle_first_line_list = []
@@ -145,9 +145,9 @@ class Solve_coordinates:
 
             j = j + 1
         i = i + 1
-        print(
+        print((
             "PyEphem - Simulation [%s/%d] done!" %
-            (i, self.satellites_number))
+            (i, self.satellites_number)))
 
     def output_data(self, name, time, alt, az):
 

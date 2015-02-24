@@ -27,7 +27,7 @@ class Get_elements:
         list_length = len(lista_nombres_satelites)
         y = list_length / 3
 
-        numbers_list = map(self.devuelve_lista, range(y))
+        numbers_list = list(map(self.devuelve_lista, list(range(y))))
 
         lista_satelites = []
         lista_linea1 = []
