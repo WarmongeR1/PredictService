@@ -2,6 +2,7 @@
 import datetime
 import os
 from dateconv import d2u
+import progressbar
 
 
 class BasePropagator(object):
@@ -40,6 +41,19 @@ class BasePropagator(object):
         self.start_time = d2u(self.start_time)
         self.end_time = d2u(self.end_time)
 
+    def _predict(self, satellite_info):
+        bar = progressbar.ProgressBar(maxval=len(satellite_info[0]))
+        bar.start()
+
+        # Provide data to pyephem_routine
+        for i in range(len(satellite_info[0])):
+            self.predict(satellite_info[0][i], satellite_info[1][i],
+                         satellite_info[2][i], i)
+            i = i + 1
+            bar.update(i + 1)
+
+        bar.finish()
+
     def get_location(self):
         # todo
         # вынести в нормальный конфиг
@@ -62,3 +76,6 @@ class BasePropagator(object):
             file.writelines("%d\t" % time)
             file.writelines("%0.6f\t" % alt)
             file.writelines("%0.6f\n" % az)
+
+    def predict(self, param, param1, param2, i):
+        raise NotImplemented

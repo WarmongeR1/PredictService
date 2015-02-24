@@ -22,7 +22,6 @@
 import datetime
 import os
 
-import progressbar
 import pyorbital.orbital
 
 from src.base.basepropagator import BasePropagator
@@ -46,19 +45,7 @@ class Propagator(BasePropagator):
         super(Propagator, self).__init__(output_folder,
                                          start_time, end_time)
 
-        self.satellites_number = len(satellite_info[0])
-
-        bar = progressbar.ProgressBar(maxval=len(satellite_info[0]))
-        bar.start()
-
-        # Provide data to pyephem_routine
-        for i in range(len(satellite_info[0])):
-            self.predict(satellite_info[0][i], satellite_info[1][i],
-                         satellite_info[2][i], i)
-            i = i + 1
-            bar.update(i + 1)
-
-        bar.finish()
+        self._predict(satellite_info)
 
     def get_satellite(self, tle0, tle1, tle2):
         return pyorbital.orbital.Orbital(
@@ -79,7 +66,6 @@ class Propagator(BasePropagator):
 
         az1, alt1 = satellite.get_observer_look(time1, lon, lat, ele)
 
-
         output_filepath = os.path.join(self.output_folder,
                                        satellite_name)
         if alt1 > 0:
@@ -93,7 +79,6 @@ class Propagator(BasePropagator):
             azN, altN = satellite.get_observer_look(timeN, lon, lat, ele)
 
             if altN > 0:
-
 
                 self.output_data(output_filepath, n2, altN, azN)
 

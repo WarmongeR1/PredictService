@@ -22,12 +22,9 @@
 import os
 import math
 
-
 import ephem
-import progressbar
-from src.base.basepropagator import BasePropagator
 
-from src.utils.reader import TleReader
+from src.base.basepropagator import BasePropagator
 
 
 class Propagator(BasePropagator):
@@ -40,8 +37,8 @@ class Propagator(BasePropagator):
 
         :param satellite_info: tuple with 3 elements (element = list)
         :param output_folder:  string
-        :param start_time:  datetime object
-        :param end_time:  datetime object
+        :param start_time:  human time, example '2015-01-01 18:21:26'
+        :param end_time:  human time, example '2015-01-01 18:21:26'
         :return:
         """
 
@@ -51,27 +48,14 @@ class Propagator(BasePropagator):
         self.satellites_number = len(satellite_info[0])
         self.observer = self.gen_observer()
 
-        bar = progressbar.ProgressBar(maxval=len(satellite_info[0]))
-        bar.start()
-
-        # Provide data to pyephem_routine
-        for i in range(len(satellite_info[0])):
-            self.pyephem_routine(
-                satellite_info[0][i],
-                satellite_info[1][i],
-                satellite_info[2][i],
-                i)
-            i = i + 1
-            bar.update(i + 1)
-
-        bar.finish()
+        self._predict(satellite_info)
 
     def get_satellite(self, tle0, tle1, tle2):
         satellite = ephem.readtle(tle0, tle1, tle2)
         satellite.compute(self.observer)
         return satellite
 
-    def pyephem_routine(self, satellite_name, line1, line2, i):
+    def predict(self, satellite_name, line1, line2, i):
 
         satellite = self.get_satellite(satellite_name, line1, line2)
 
@@ -88,7 +72,7 @@ class Propagator(BasePropagator):
         az1 = float(repr(satellite.az))
         az1 = math.degrees(az1)
         output_filepath = os.path.join(self.output_folder,
-                               satellite_name)
+                                       satellite_name)
         if alt1 >= 0:
             self.output_data(output_filepath, self.start_time, alt1, az1)
 
@@ -106,7 +90,6 @@ class Propagator(BasePropagator):
             azN = float(repr(satellite.az))
             azN = math.degrees(azN)
             if altN >= 0:
-
                 self.output_data(output_filepath, UnixTimeN, altN, azN)
 
     def gen_observer(self):
@@ -124,20 +107,3 @@ class Propagator(BasePropagator):
         observer.horizon = '0'
 
         return observer
-
-
-def main():
-    print()
-    print("PyEphem data")
-    filpeath = '/home/warmonger/Develop/Github/propagators/bin/TLEs/dmc.txt'
-    output_folder = '/home/warmonger/Develop/Github/propagators/bin/result/PyEphem'
-    obj = TleReader()
-    obj.read(filpeath)
-
-    # Time will be in UNIX units
-    solve_coordinates = Propagator(
-        obj.get(), output_folder)
-
-
-if __name__ == '__main__':
-    main()
