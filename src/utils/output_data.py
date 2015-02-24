@@ -22,21 +22,17 @@
 
 
 from os import listdir
-from datetime import datetime
 import csv
-import os
 from os import getcwd, chdir
 
 import numpy
 
 
-
-
-
 class Read_data(object):
 
     def __init__(self, index_pyephem, index_predict, index_pyorbital,
-                 index_orbitron, sat_selected, index_STK, STK_dir, orbitron_dir):
+                 index_orbitron, sat_selected, index_STK, STK_dir,
+                 orbitron_dir):
 
         # Orbitron stuff
         self.file = '/home/case/Orbitron/Output/output.txt'
@@ -73,14 +69,16 @@ class Read_data(object):
 
         time_intersected_predict = []
         time_intersected_predict = list(
-            set(self.STK_simulation_time).intersection(self.predict_simulation_time))
+            set(self.STK_simulation_time).intersection(
+                self.predict_simulation_time))
 
         i = 0
 
         for i in range(len(time_intersected_predict)):
-
             difference_alt = \
-                float(self.predict_alt_satellite[self.predict_simulation_time.index(time_intersected_predict[i])]) - \
+                float(self.predict_alt_satellite[
+                    self.predict_simulation_time.index(
+                        time_intersected_predict[i])]) - \
                 float(
                     self.STK_alt_satellite[
                         self.STK_simulation_time.index(
@@ -89,7 +87,9 @@ class Read_data(object):
             list_alt.append(difference_alt)
 
             difference_az = \
-                float(self.predict_az_satellite[self.predict_simulation_time.index(time_intersected_predict[i])]) - \
+                float(self.predict_az_satellite[
+                    self.predict_simulation_time.index(
+                        time_intersected_predict[i])]) - \
                 float(
                     self.STK_az_satellite[
                         self.STK_simulation_time.index(
@@ -132,14 +132,16 @@ class Read_data(object):
 
         time_intersected_predict = []
         time_intersected_predict = list(
-            set(self.STK_simulation_time).intersection(self.predict_simulation_time))
+            set(self.STK_simulation_time).intersection(
+                self.predict_simulation_time))
 
         i = 0
 
         for i in range(len(time_intersected_predict)):
-
             difference_alt = \
-                float(self.predict_alt_satellite[self.predict_simulation_time.index(time_intersected_predict[i])]) - \
+                float(self.predict_alt_satellite[
+                    self.predict_simulation_time.index(
+                        time_intersected_predict[i])]) - \
                 float(
                     self.STK_alt_satellite[
                         self.STK_simulation_time.index(
@@ -148,7 +150,9 @@ class Read_data(object):
             list_alt.append(difference_alt)
 
             difference_az = \
-                float(self.predict_az_satellite[self.predict_simulation_time.index(time_intersected_predict[i])]) - \
+                float(self.predict_az_satellite[
+                    self.predict_simulation_time.index(
+                        time_intersected_predict[i])]) - \
                 float(
                     self.STK_az_satellite[
                         self.STK_simulation_time.index(
@@ -188,7 +192,6 @@ class Read_data(object):
         i = 0
 
         for i in range(len(time_intersected)):
-
             difference_alt = \
                 float(pyephem_alt[pyephem_time.index(time_intersected[i])]) - \
                 float(
@@ -256,7 +259,6 @@ class Read_data(object):
         i = 0
 
         for i in range(len(time_intersected)):
-
             difference_alt = \
                 float(pyephem_alt[pyephem_time.index(time_intersected[i])]) - \
                 float(
@@ -307,9 +309,9 @@ class Read_data(object):
         i = 0
 
         for i in range(len(time_intersected)):
-
             difference_alt = \
-                float(pyorbital_alt[pyorbital_time.index(time_intersected[i])]) -\
+                float(
+                    pyorbital_alt[pyorbital_time.index(time_intersected[i])]) - \
                 float(
                     self.STK_alt_satellite[
                         self.STK_simulation_time.index(
@@ -374,9 +376,9 @@ class Read_data(object):
         i = 0
 
         for i in range(len(time_intersected)):
-
             difference_alt = \
-                float(pyorbital_alt[pyorbital_time.index(time_intersected[i])]) -\
+                float(
+                    pyorbital_alt[pyorbital_time.index(time_intersected[i])]) - \
                 float(
                     self.STK_alt_satellite[
                         self.STK_simulation_time.index(
@@ -423,9 +425,8 @@ class Read_data(object):
             set(self.STK_simulation_time).intersection(orbitron_time))
 
         for i in range(len(time_intersected)):
-
             difference_alt = \
-                float(orbitron_alt[orbitron_time.index(time_intersected[i])]) -\
+                float(orbitron_alt[orbitron_time.index(time_intersected[i])]) - \
                 float(
                     self.STK_alt_satellite[
                         self.STK_simulation_time.index(
@@ -486,9 +487,8 @@ class Read_data(object):
             set(self.STK_simulation_time).intersection(orbitron_time))
 
         for i in range(len(time_intersected)):
-
             difference_alt = \
-                float(orbitron_alt[orbitron_time.index(time_intersected[i])]) -\
+                float(orbitron_alt[orbitron_time.index(time_intersected[i])]) - \
                 float(
                     self.STK_alt_satellite[
                         self.STK_simulation_time.index(
@@ -576,98 +576,3 @@ class Read_data(object):
                     self.STK_alt_satellite.append((row[2]))
                 except:
                     pass
-
-
-class Check_data(object):
-
-    def __init__(self, index_satellite, sat_name, STK_folder, Orbitron_folder):
-
-        index = index_satellite + 1
-        satellite_name = "SAT%s" % (index)
-
-        self.directorio_actual = getcwd()
-
-        self.check_predict(index_satellite, satellite_name)
-        self.check_pyephem(index_satellite, satellite_name)
-        self.check_pyorbital(index_satellite, satellite_name)
-        self.check_orbitron(index_satellite, sat_name, Orbitron_folder)
-        self.check_STK(index_satellite, STK_folder)
-
-        chdir(self.directorio_actual)
-
-    def check_predict(self, index, satellite_name):
-
-        chdir(self.directorio_actual + '/results/predict')
-
-        files = listdir(getcwd())
-
-        if satellite_name in files:
-            self.predict = 'yes'
-        else:
-            self.predict = 'no'
-
-    def check_pyephem(self, index, satellite_name):
-
-        chdir(self.directorio_actual + '/results/PyEphem')
-
-        files = listdir(getcwd())
-
-        if satellite_name in files:
-            self.pyephem = 'yes'
-        else:
-            self.pyephem = 'no'
-
-    def check_pyorbital(self, index, satellite_name):
-
-        chdir(self.directorio_actual + '/results/PyOrbital')
-
-        files = listdir(getcwd())
-
-        if satellite_name in files:
-            self.pyorbital = 'yes'
-        else:
-            self.pyorbital = 'no'
-
-    def check_orbitron(self, index, actual_sat_name, Orbitron_folder):
-
-        file = Orbitron_folder + '/output.txt'
-
-#		file = '/home/case/Orbitron/Output/output.txt'
-
-        try:
-            open_file = open(file, 'r')
-            file_lines = open_file.readlines()
-
-            file_lines_converted = []
-
-            for i in range(len(file_lines)):
-                file_lines_converted.append(file_lines[i].rstrip('\r\n'))
-
-            lineas_validas = []
-            for j in range(len(file_lines_converted)):
-                if file_lines_converted[j][0:4] == '2014':
-                    lineas_validas.append(file_lines_converted[j])
-
-            sats_name = []
-            for k in range(len(lineas_validas)):
-                sat_name = lineas_validas[k][20:36]
-                sat_name = sat_name.strip(' ')
-
-                sats_name.append(sat_name)
-
-            if actual_sat_name in sats_name:
-                self.orbitron = 'yes'
-            else:
-                self.orbitron = 'no'
-
-        # File not available
-        except IOError:
-            self.orbitron = 'no'
-
-    def check_STK(self, index, STK_folder):
-        from os import listdir
-
-        if index < len(listdir(STK_folder)):
-            self.STK = 'yes'
-        else:
-            self.STK = 'no'

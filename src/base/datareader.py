@@ -2,6 +2,7 @@
 
 
 class BaseDataReader(object):
+
     def __init__(self, *args):
         pass
 
@@ -16,4 +17,3 @@ class BaseDataReader(object):
 
     def get(self):
         pass
-

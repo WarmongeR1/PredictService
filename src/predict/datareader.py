@@ -45,4 +45,3 @@ class Read_predict_data:
                     self.predict_simulation_time.append(line[0])
                     self.predict_alt_satellite.append(float(line[1]))
                     self.predict_az_satellite.append(float(line[2]))
-

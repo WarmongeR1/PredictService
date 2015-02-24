@@ -7,6 +7,7 @@ import progressbar
 
 
 class BasePropagator(object):
+
     def __init__(self,
                  output_folder,
                  start_time=None,

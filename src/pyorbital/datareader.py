@@ -6,6 +6,7 @@ from src.base.datareader import BaseDataReader
 
 
 class DataReader(BaseDataReader):
+
     def __init__(self, data_folder, index_satellite, *args):
         super().__init__(*args)
         self.simulation_time = []
