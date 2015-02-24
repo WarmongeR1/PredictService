@@ -22,10 +22,9 @@
 import datetime
 import os
 
-import pyorbital.orbital
+from pyorbital.orbital import Orbital
 
 from src.base.basepropagator import BasePropagator
-from src.utils.reader import TleReader
 
 
 class Propagator(BasePropagator):
@@ -48,7 +47,7 @@ class Propagator(BasePropagator):
         self._predict(satellite_info)
 
     def get_satellite(self, tle0, tle1, tle2):
-        return pyorbital.orbital.Orbital(
+        return Orbital(
             tle0,
             line1=tle1,
             line2=tle2)
@@ -79,22 +78,4 @@ class Propagator(BasePropagator):
             azN, altN = satellite.get_observer_look(timeN, lon, lat, ele)
 
             if altN > 0:
-
                 self.output_data(output_filepath, n2, altN, azN)
-
-
-def main():
-    print()
-    print("PyOrbit data")
-    filpeath = '/home/warmonger/Develop/Github/propagators/bin/TLEs/dmc.txt'
-    output_folder = '/home/warmonger/Develop/Github/propagators/bin/result/PyOrbital'
-    obj = TleReader()
-    obj.read(filpeath)
-
-    # Time will be in UNIX units
-    solve_coordinates = Propagator(
-        obj.get(), output_folder)
-
-
-if __name__ == '__main__':
-    main()
