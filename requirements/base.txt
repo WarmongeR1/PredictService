@@ -2,4 +2,3 @@ pyephem
 matplotlib
 pyorbital
 
-Tkinter
