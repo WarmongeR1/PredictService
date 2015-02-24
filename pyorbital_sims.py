@@ -86,8 +86,10 @@ class Solve_coordinates:
                     lista_prueba2[i],
                     i)
             except NotImplementedError:
-                print "pyorbital - Simulation [%d/%d] error!" % (j, len(lista_elementos))
-                print "Deep space satellite - Propagation not available"
+                print(
+                    "pyorbital - Simulation [%d/%d] error!" %
+                    (j, len(lista_elementos)))
+                print("Deep space satellite - Propagation not available")
             i = i + 1
 
     def pyephem_routine(self, satellite_name, line1, line2, i):
@@ -144,7 +146,9 @@ class Solve_coordinates:
             j = j + 1
 
         i = i + 1
-        print "PyOrbital - Simulation [%s/%d] done!" % (i, self.satellites_number)
+        print(
+            "PyOrbital - Simulation [%s/%d] done!" %
+            (i, self.satellites_number))
 
     def output_data(self, name, time, alt, az):
 
@@ -156,7 +160,7 @@ class Solve_coordinates:
         create_file.writelines("%d\t" % time)
         create_file.writelines("%0.6f\t" % alt)
         create_file.writelines("%0.6f\n" % az)
-        create_file.close
+        create_file.close()
         chdir(script_dir)
 
     def get_location(self):
@@ -167,7 +171,7 @@ class Solve_coordinates:
         lines = open_file.readlines()
         lines = [item.rstrip('\n') for item in lines]
 
-        site = lines[0]
+        lines[0]
         lat = float(lines[1])
         lon = float(lines[2])
         ele = int(lines[3])
@@ -176,8 +180,8 @@ class Solve_coordinates:
 
 
 if __name__ == '__main__':
-    print ""
-    print "PyOrbital data"
+    print()
+    print("PyOrbital data")
     do_list = Do_list()
 
     solve_coordinates = Solve_coordinates(

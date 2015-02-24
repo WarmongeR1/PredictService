@@ -67,8 +67,6 @@ class Solve_coordinates:
     def __init__(self, satellites_name, lista_prueba, lista_prueba2):
 
         import ephem
-        import sys
-        import os
 
         self.satellites_number = len(satellites_name)
 
@@ -173,7 +171,7 @@ class Solve_coordinates:
         lines = open_file.readlines()
         lines = [item.rstrip('\n') for item in lines]
 
-        site = lines[0]
+        lines[0]
         lat = lines[1]
         lon = lines[2]
         ele = int(lines[3])

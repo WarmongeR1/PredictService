@@ -279,7 +279,8 @@ class Read_pyorbital_data:
 
     def __init__(self, index_satellite):
 
-        from os import chdir, getcwd, listdir
+        from os import chdir
+        from os import getcwd
 
         index_satellite = index_satellite + 1
         directorio_script = getcwd()

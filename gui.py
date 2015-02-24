@@ -21,9 +21,6 @@
 ##########################################################################
 
 
-import matplotlib
-
-
 class GUI:
 
     def __init__(self):
@@ -50,7 +47,6 @@ class GUI:
         import Tkinter as tk
         from matplotlib.figure import Figure
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-        import matplotlib.pyplot as plt
 
         # Default
         available_predict = 'no'
@@ -985,7 +981,7 @@ class GUI:
                      std_pyorbital_az) = data.STK_vs_PyOrbital()
 
                     std_pyorbital_alt = round(float(std_pyorbital_alt), 7)
-                    std_pyrobital_az = round(float(std_pyorbital_az), 7)
+                    round(float(std_pyorbital_az), 7)
 
                     text.append(" PyOrbital data")
                     text.append(
