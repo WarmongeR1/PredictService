@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 """scrolledlist.py: A Tkinter widget combining a Listbox with Scrollbar(s).
 
   For details, see:

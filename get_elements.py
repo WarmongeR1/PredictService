@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from math import degrees
 from os import getcwd, chdir
 

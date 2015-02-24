@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from os import listdir
 
 import sys

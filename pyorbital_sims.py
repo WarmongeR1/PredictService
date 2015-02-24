@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 
 ##########################################################################
 # Copyright 2014 Samuel Gongora Garcia (s.gongoragarcia@gmail.com)
