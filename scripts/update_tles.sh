@@ -29,7 +29,11 @@ bar=(
 '#############   (94%)' '##############  (97%)' 
 '############## (100%)')
 
-cd TLEs/
+
+TLE_FOLDER=./TLEs/
+
+mkdir -p $TLE_FOLDER
+cd $TLE_FOLDER
 
 n=0
 
