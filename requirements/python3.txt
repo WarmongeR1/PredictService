@@ -1,1 +1,2 @@
 -r base.txt
+git+https://github.com/WarmongeR1/pyorbital.git
