@@ -19,14 +19,13 @@
 ##########################################################################
 # Author: sapronov.alexander92[at]gmail.com
 ##########################################################################
+import datetime
 import os
-import math
 
-
-import ephem
 import progressbar
-from src.base.basepropagator import BasePropagator
+import pyorbital.orbital
 
+from src.base.basepropagator import BasePropagator
 from src.utils.reader import TleReader
 
 
@@ -44,93 +43,66 @@ class Propagator(BasePropagator):
         :param end_time:  datetime object
         :return:
         """
-
         super(Propagator, self).__init__(output_folder,
                                          start_time, end_time)
 
         self.satellites_number = len(satellite_info[0])
-        self.observer = self.gen_observer()
 
         bar = progressbar.ProgressBar(maxval=len(satellite_info[0]))
         bar.start()
 
         # Provide data to pyephem_routine
         for i in range(len(satellite_info[0])):
-            self.pyephem_routine(
-                satellite_info[0][i],
-                satellite_info[1][i],
-                satellite_info[2][i],
-                i)
+            self.predict(satellite_info[0][i], satellite_info[1][i],
+                         satellite_info[2][i], i)
             i = i + 1
             bar.update(i + 1)
 
         bar.finish()
 
     def get_satellite(self, tle0, tle1, tle2):
-        satellite = ephem.readtle(tle0, tle1, tle2)
-        satellite.compute(self.observer)
-        return satellite
+        return pyorbital.orbital.Orbital(
+            tle0,
+            line1=tle1,
+            line2=tle2)
 
-    def pyephem_routine(self, satellite_name, line1, line2, i):
+    def predict(self, satellite_name, line1, line2, i):
 
         satellite = self.get_satellite(satellite_name, line1, line2)
 
         iterations = self.end_time - self.start_time
         iterations -= 1
 
-        n1 = (self.start_time + 2440587.5 * 86400) / 86400 - 2415020
-
-        self.observer.date = n1
-
-        satellite.compute(self.observer)
-        alt1 = float(repr(satellite.alt))
-        alt1 = math.degrees(alt1)
-        az1 = float(repr(satellite.az))
-        az1 = math.degrees(az1)
-        output_filepath = os.path.join(self.output_folder,
-                               satellite_name)
-        if alt1 >= 0:
-            self.output_data(output_filepath, self.start_time, alt1, az1)
-
-        for j in range(iterations):
-            time = ephem.Date(self.observer.date + ephem.second)
-            self.observer.date = time
-
-            # UNIX Time
-            UnixTimeN = float(time)
-            UnixTimeN = int((UnixTimeN - 25567.5) * 86400)
-
-            satellite.compute(self.observer)
-            altN = float(repr(satellite.alt))
-            altN = math.degrees(altN)
-            azN = float(repr(satellite.az))
-            azN = math.degrees(azN)
-            if altN >= 0:
-
-                self.output_data(output_filepath, UnixTimeN, altN, azN)
-
-    def gen_observer(self):
-        observer = ephem.Observer()
+        time1 = datetime.datetime.fromtimestamp(self.start_time)
 
         (lon, lat, ele) = self.get_location()
 
-        observer.lon = ephem.degrees(lon)
-        observer.lat = ephem.degrees(lat)
-        observer.elevation = ele
+        az1, alt1 = satellite.get_observer_look(time1, lon, lat, ele)
 
-        observer.date = ephem.now()
-        observer.epoch = ephem.now()
 
-        observer.horizon = '0'
+        output_filepath = os.path.join(self.output_folder,
+                                       satellite_name)
+        if alt1 > 0:
+            self.output_data(output_filepath, self.start_time, alt1, az1)
 
-        return observer
+        n2 = self.start_time
+
+        for j in range(iterations):
+            n2 += 1
+            timeN = datetime.datetime.fromtimestamp(n2)
+            azN, altN = satellite.get_observer_look(timeN, lon, lat, ele)
+
+            if altN > 0:
+
+
+                self.output_data(output_filepath, n2, altN, azN)
 
 
 def main():
     print()
-    print("PyEphem data")
+    print("PyOrbit data")
     filpeath = '/home/warmonger/Develop/Github/propagators/bin/TLEs/dmc.txt'
-    output_folder = '/home/warmonger/Develop/Github/propagators/bin/result/PyEphem'
+    output_folder = '/home/warmonger/Develop/Github/propagators/bin/result/PyOrbital'
     obj = TleReader()
     obj.read(filpeath)
 

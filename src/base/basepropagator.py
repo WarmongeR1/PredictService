@@ -1,8 +1,44 @@
 # -*- encoding: utf-8 -*-
+import datetime
 import os
+from dateconv import d2u
 
 
 class BasePropagator(object):
+
+    def __init__(self,
+                 output_folder,
+                 start_time=None,
+                 end_time=None):
+        """
+
+        :param satellite_info: tuple with 3 elements (element = list)
+        :param output_folder:  string
+        :param start_time:  datetime object
+        :param end_time:  datetime object
+        :return:
+        """
+
+        if start_time is None:
+            now = datetime.datetime.now()
+            self.start_time = now
+        else:
+            self.start_time = start_time
+
+        if end_time is None:
+            self.end_time = self.start_time + datetime.timedelta(days=1)
+        else:
+            self.end_time = end_time
+
+        if output_folder is None:
+            self.output_folder = './results/propagator'
+        else:
+            self.output_folder = output_folder
+
+        self.check_create(self.output_folder)
+
+        self.start_time = d2u(self.start_time)
+        self.end_time = d2u(self.end_time)
 
     def get_location(self):
         # todo
@@ -11,8 +47,8 @@ class BasePropagator(object):
         lines = open_file.readlines()
         lines = [item.rstrip('\n') for item in lines]
 
-        lat = lines[1]
-        lon = lines[2]
+        lat = float(lines[1])
+        lon = float(lines[2])
         ele = int(lines[3])
 
         return lon, lat, ele
