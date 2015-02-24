@@ -21,6 +21,10 @@
 ##########################################################################
 import sys
 
+from src.gui import scrolledlist
+from src.utils import get_elements, output_data
+
+
 if sys.version < '3':
     from tkinter.filedialog import asksaveasfile
     import tkinter.messagebox
@@ -32,11 +36,8 @@ else:
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
     NavigationToolbar2TkAgg
-import get_elements
 from sys import argv
-import output_data
-import scrolledlist
-from output_data import Read_data, Check_data
+from src.utils.output_data import Read_data, Check_data
 
 
 class GUI:
