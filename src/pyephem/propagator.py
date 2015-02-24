@@ -74,7 +74,7 @@ class Propagator(BasePropagator):
         output_filepath = os.path.join(self.output_folder,
                                        satellite_name)
         if alt1 >= 0:
-            self.output_data(output_filepath, self.start_time, alt1, az1)
+            self.save(output_filepath, self.start_time, alt1, az1)
 
         for j in range(iterations):
             time = ephem.Date(self.observer.date + ephem.second)
@@ -90,7 +90,7 @@ class Propagator(BasePropagator):
             azN = float(repr(satellite.az))
             azN = math.degrees(azN)
             if altN >= 0:
-                self.output_data(output_filepath, UnixTimeN, altN, azN)
+                self.save(output_filepath, UnixTimeN, altN, azN)
 
     def gen_observer(self):
         observer = ephem.Observer()

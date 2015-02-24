@@ -1,19 +1,17 @@
 # -*- encoding: utf-8 -*-
 import datetime
 import os
+
 from dateconv import d2u
 import progressbar
 
 
 class BasePropagator(object):
-
     def __init__(self,
                  output_folder,
                  start_time=None,
                  end_time=None):
         """
-
-        :param satellite_info: tuple with 3 elements (element = list)
         :param output_folder:  string
         :param start_time:  datetime object
         :param end_time:  datetime object
@@ -36,7 +34,7 @@ class BasePropagator(object):
         else:
             self.output_folder = output_folder
 
-        self.check_create(self.output_folder)
+        self.create(self.output_folder)
 
         self.start_time = d2u(self.start_time)
         self.end_time = d2u(self.end_time)
@@ -67,11 +65,11 @@ class BasePropagator(object):
 
         return lon, lat, ele
 
-    def check_create(self, folder):
+    def create(self, folder):
         if not os.path.exists(folder):
             os.makedirs(folder)
 
-    def output_data(self, output_filepath, time, alt, az):
+    def save(self, output_filepath, time, alt, az):
         with open(output_filepath, 'a') as file:
             file.writelines("%d\t" % time)
             file.writelines("%0.6f\t" % alt)

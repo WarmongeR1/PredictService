@@ -40,7 +40,7 @@ from sys import argv
 from src.utils.output_data import Read_data, Check_data
 
 
-class GUI:
+class GUI(object):
 
     def __init__(self):
 

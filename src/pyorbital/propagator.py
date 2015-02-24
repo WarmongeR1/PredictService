@@ -68,7 +68,7 @@ class Propagator(BasePropagator):
         output_filepath = os.path.join(self.output_folder,
                                        satellite_name)
         if alt1 > 0:
-            self.output_data(output_filepath, self.start_time, alt1, az1)
+            self.save(output_filepath, self.start_time, alt1, az1)
 
         n2 = self.start_time
 
@@ -78,4 +78,4 @@ class Propagator(BasePropagator):
             azN, altN = satellite.get_observer_look(timeN, lon, lat, ele)
 
             if altN > 0:
-                self.output_data(output_filepath, n2, altN, azN)
+                self.save(output_filepath, n2, altN, azN)
