@@ -12,7 +12,7 @@ else:
     from tkinter import LabelFrame, Radiobutton, LabelFrame
 
 import scrolledlist
-
+from scrolledlist import ScrolledList
 
 class Window(object):
 
@@ -36,7 +36,6 @@ class Window(object):
             text="Site settings")
         site_frame.grid(column=0, row=0, columnspan=1, rowspan=1)
 
-        from scrolledlist import ScrolledList
         site = ScrolledList(site_frame, width=20, height=3)
         site.grid(column=0, row=0, columnspan=1, rowspan=1)
 

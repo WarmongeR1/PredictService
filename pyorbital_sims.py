@@ -168,7 +168,6 @@ class Solve_coordinates(object):
         lines = open_file.readlines()
         lines = [item.rstrip('\n') for item in lines]
 
-        lines[0]
         lat = float(lines[1])
         lon = float(lines[2])
         ele = int(lines[3])

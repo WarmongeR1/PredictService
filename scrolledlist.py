@@ -6,18 +6,12 @@
     http://www.nmt.edu/tcc/help/lang/python/examples/scrolledlist/
 """
 
-#================================================================
-# Imports
-#----------------------------------------------------------------
 import sys
 if sys.version < '3':
     from tkinter import *
 else:
     from tkinter import *
 
-#================================================================
-# Manifest constants
-#----------------------------------------------------------------
 
 DEFAULT_WIDTH = "40"
 DEFAULT_HEIGHT = "25"
@@ -46,23 +40,22 @@ class ScrolledList(Frame):
                  height=DEFAULT_HEIGHT, vscroll=1, hscroll=0, callback=None):
         """Constructor for ScrolledList.
         """
-        #-- 1 --
-        # [ self  :=  a new Frame widget child of master ]
+
         Frame.__init__(self, master)
-        #-- 2 --
+
         self.width = width
         self.height = height
         self.vscroll = vscroll
         self.hscroll = hscroll
         self.callback = callback
-        #-- 3 --
+
         # [ self  :=  self with all widgets created and registered ]
         self.__createWidgets()
 
     def __createWidgets(self):
         """Lay out internal widgets.
         """
-        #-- 1 --
+
         # [ if self.vscroll ->
         #     self  :=  self with a vertical Scrollbar widget added
         #     self.vScrollbar  :=  that widget ]
@@ -70,7 +63,7 @@ class ScrolledList(Frame):
         if self.vscroll:
             self.vScrollbar = Scrollbar(self, orient=VERTICAL)
             self.vScrollbar.grid(row=0, column=1, sticky=N + S)
-        #-- 2 --
+
         # [ if self.hscroll ->
         #     self  :=  self with a horizontal Scrollbar widget added
         #     self.hScrollbar  :=  that widget
@@ -78,14 +71,14 @@ class ScrolledList(Frame):
         if self.hscroll:
             self.hScrollbar = Scrollbar(self, orient=HORIZONTAL)
             self.hScrollbar.grid(row=1, column=0, sticky=E + W)
-        #-- 3 --
+
         # [ self  :=  self with a Listbox widget added
         #   self.listbox  :=  that widget ]
         self.listbox = Listbox(self, relief=SUNKEN,
                                width=self.width, height=self.height,
                                borderwidth=2)
         self.listbox.grid(row=0, column=0)
-        #-- 4 --
+
         # [ if self.vscroll ->
         #     self.listbox  :=  self.listbox linked so that
         #         self.vScrollbar can reposition it ]
@@ -96,7 +89,7 @@ class ScrolledList(Frame):
             self.listbox["yscrollcommand"] = self.vScrollbar.set
             self.vScrollbar["command"] = self.listbox.yview
 
-        #-- 5 --
+
         # [ if self.hscroll ->
         #     self.listbox  :=  self.listbox linked so that
         #         self.hScrollbar can reposition it ]
@@ -106,7 +99,7 @@ class ScrolledList(Frame):
         if self.hscroll:
             self.listbox["xscrollcommand"] = self.hScrollbar.set
             self.hScrollbar["command"] = self.listbox.xview
-        #-- 6 --
+
         # [ self.listbox  :=  self.listbox with an event handler
         #       for button-1 clicks that causes self.callback
         #       to be called if there is one ]
@@ -115,15 +108,15 @@ class ScrolledList(Frame):
     def __clickHandler(self, event):
         """Called when the user clicks on a line in the listbox.
         """
-        #-- 1 --
+
         if not self.callback:
             return
-        #-- 2 --
+
         # [ call self.callback(c) where c is the line index
         #   corresponding to event.y ]
         lineNo = self.listbox.nearest(event.y)
         self.callback(lineNo)
-        #-- 3 --
+
         self.listbox.focus_set()
 
     def count(self):
@@ -135,8 +128,7 @@ class ScrolledList(Frame):
         """Get the (k)th line from the listbox.
         """
 
-        #-- 1 --
-        if (0 <= k < self.count()):
+        if 0 <= k < self.count():
             return self.listbox.get(k)
         else:
             raise IndexError("ScrolledList[%d] out of range." % k)
@@ -150,13 +142,11 @@ class ScrolledList(Frame):
         """Insert a line between two existing lines.
         """
 
-        #-- 1 --
         if 0 <= linex < self.count():
             where = linex
         else:
             where = END
 
-        #-- 2 --
         self.listbox.insert(where, text)
 
     def delete(self, linex):
