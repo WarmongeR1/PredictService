@@ -2,6 +2,9 @@
 
 import sys
 
+from ephem import Observer, degrees, now
+import ephem
+
 
 class TLEReader(object):
 
@@ -9,6 +12,11 @@ class TLEReader(object):
         self.show_satellite_list = []
         self.tle_first_line_list = []
         self.tle_second_line_list = []
+
+        self.observer = None
+        self.inclination = None
+        self.mean_motion = None
+        self.epoch = None
 
     def read(self, filepath):
         """Read file and generate 3 lists with TLE lines.
@@ -55,3 +63,41 @@ class TLEReader(object):
         return self.show_satellite_list, \
             self.tle_first_line_list, \
             self.tle_second_line_list
+
+    def devuelve_lista(self, x):
+        return 3 * x
+
+    def pyephem_routine(self, name, line1, line2):
+
+        satellite = ephem.readtle(name, line1, line2)
+        satellite.compute(self.observer)
+
+        self.inclination = degrees(satellite._inc)
+        self.mean_motion = satellite._n
+        self.epoch = satellite._epoch
+
+    def get_location(self):
+        # todo
+        # load from settings
+        lon = '-2.314722'
+        lat = '36.832778'
+        ele = 20
+
+        return lon, lat, ele
+
+    def solve_coordinates(self, index):
+
+        self.observer = Observer()
+        (lon, lat, ele) = self.get_location()
+
+        self.observer.lon = degrees(lon)
+        self.observer.lat = degrees(lat)
+        self.observer.elevation = ele
+
+        self.observer.date = now()
+        self.observer.epoch = now()
+
+        for i in range(index):
+            self.pyephem_routine(self.show_satellite_list[i],
+                                 self.tle_first_line_list[i],
+                                 self.tle_second_line_list[i])

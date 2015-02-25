@@ -22,7 +22,7 @@
 import os
 import math
 
-import run_ephem
+import ephem
 
 from src.base.propagator import BasePropagator
 
@@ -51,7 +51,7 @@ class Propagator(BasePropagator):
         self._predict(satellite_info)
 
     def get_satellite(self, tle0, tle1, tle2):
-        satellite = run_ephem.readtle(tle0, tle1, tle2)
+        satellite = ephem.readtle(tle0, tle1, tle2)
         satellite.compute(self.observer)
         return satellite
 
@@ -77,7 +77,7 @@ class Propagator(BasePropagator):
             self.save(output_filepath, self.start_time, alt1, az1)
 
         for j in range(iterations):
-            time = run_ephem.Date(self.observer.date + run_ephem.second)
+            time = ephem.Date(self.observer.date + ephem.second)
             self.observer.date = time
 
             # UNIX Time
@@ -93,16 +93,16 @@ class Propagator(BasePropagator):
                 self.save(output_filepath, UnixTimeN, altN, azN)
 
     def gen_observer(self):
-        observer = run_ephem.Observer()
+        observer = ephem.Observer()
 
         (lon, lat, ele) = self.get_location()
 
-        observer.lon = run_ephem.degrees(lon)
-        observer.lat = run_ephem.degrees(lat)
+        observer.lon = ephem.degrees(lon)
+        observer.lat = ephem.degrees(lat)
         observer.elevation = ele
 
-        observer.date = run_ephem.now()
-        observer.epoch = run_ephem.now()
+        observer.date = ephem.now()
+        observer.epoch = ephem.now()
 
         observer.horizon = '0'
 

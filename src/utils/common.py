@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
 from datetime import datetime
-
 import os
 import sys
+
 from settings import PROGRAMMS
+
 
 def local_to_unix(year, month, day, hour, minute, second):
 
@@ -19,29 +20,25 @@ def local_to_unix(year, month, day, hour, minute, second):
 
     return unix_time
 
+
 def get_cnt_lines_in_file(filepath):
+    return len(read_file(filepath))
+
+
+def read_file(filepath):
     try:
         with open(filepath, 'r') as fi:
-            return len([item.rstrip('\n') for item in fi.readlines()])
+            return [item.rstrip('\n') for item in fi.readlines()]
     except Exception:
         raise
 
+
 def get_cnt_satellites(data_folder):
-    result = 0
-    for programm in PROGRAMMS:
-        filepath = os.path.join(data_folder, programm, 'temp')
-        if os.path.exists(filepath):
-            result = get_cnt_lines_in_file(filepath)
-        else:
-            continue
-    else:
-        raise Exception("Not found results in folder %s" % data_folder)
-    # noinspection PyUnreachableCode
-    return result
+    return len(get_names(data_folder))
+
 
 def get_satellite_names(filepath):
-    with open(filepath, 'r') as fi:
-        lines = [item.rstrip('\n') for item in fi.readlines()]
+    lines = read_file(filepath)
 
     if sys.version < '3':
         y = len(lines) / 3
@@ -64,3 +61,19 @@ def generate_temp_files(tle_filepath, data_folder):
         with open(filepath, 'w') as fi:
             fi.writelines(['%s\n' % item for item in satellites_list])
 
+
+def get_names(data_folder):
+    result = 0
+    for programm in PROGRAMMS:
+        filepath = os.path.join(data_folder, programm, 'temp')
+        if os.path.exists(filepath):
+            result = get_cnt_lines_in_file(filepath)
+        else:
+            continue
+    else:
+        raise Exception('Not found results in folder %s' % data_folder)
+    return result
+
+
+def get_name(data_folder, index):
+    return get_names(data_folder)[index]
