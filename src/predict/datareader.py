@@ -12,7 +12,8 @@ class DataReader(BaseDataReader):
         super().__init__(data_folder, index_satellite)
 
         self.satellite_name = None
-        self.data_folder = data_folder
+        self.reader_name = 'predict'
+        self.data_folder = os.path.join(data_folder, self.reader_name)
         self.files = []
         index_satellite += 1
         self._open()

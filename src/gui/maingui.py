@@ -25,6 +25,19 @@ from src.gui import scrolledlist
 from src.utils import get_elements, output_data
 from src.utils.common import get_cnt_satellites
 
+from src.predict.datareader import DataReader as PredictReader
+from src.pyephem.datareader import DataReader as PyEphemReader
+from src.pyorbital.datareader import DataReader as PyOrbitalReader
+from src.orbitron.datareader import DataReader as OrbitronReader
+from src.stk.datareader import DataReader as STKReader
+
+from src.predict.datachecker import DataChecker as PredictChecker
+from src.pyephem.datachecker import DataChecker as PyEphemChecker
+from src.pyorbital.datachecker import DataChecker as PyOrbitalChecker
+from src.orbitron.datachecker import DataChecker as OrbitronChecker
+from src.stk.datachecker import DataChecker as STKChecker
+
+
 
 if sys.version < '3':
     from tkinter.filedialog import asksaveasfile
@@ -38,7 +51,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
     NavigationToolbar2TkAgg
 from sys import argv
-from src.utils.output_data import Read_data, Check_data
 
 
 class MainGUI(object):
@@ -46,119 +58,95 @@ class MainGUI(object):
     def __init__(self):
 
         self.index = 0
-        self.pyephem = 0
-        self.predict = 0
-        self.pyorbital = 0
-        self.STK = 0
-        self.orbitron = 0
+        self.cur_sat = ''
+        self.index_pyephem = 0
+        self.index_predict = 0
+        self.index_pyorbital = 0
+        self.index_stk = 0
+        self.index_orbitron = 0
+        self.data_folder = ''
 
-        self.length = get_cnt_satellites() - 1
+        self.progs = [
+            {
+                "name": 'PyEphem',
+                "reader": PyEphemReader,
+                "checker": PyEphemChecker,
+                "index": self.index_pyephem,
+                "plot_alt": None,
+                "plot_az": None,
+                "color": "b",
+            },
+            {
+                "name": 'predict',
+                "reader": PredictReader,
+                "checker": PredictChecker,
+                "index": self.index_predict,
+                "color": "r",
+            },
+            {
+                "name": 'orbitron',
+                "reader": OrbitronReader,
+                "checker": PredictChecker,
+                "index": self.index_orbitron,
+                "plot_alt": None,
+                "plot_az": None,
+                "color": "y",
+            },
+            {
+                "name": 'pyorbital',
+                "reader": PyOrbitalReader,
+                "checker": PyOrbitalChecker,
+                "index": self.index_pyorbital,
+                "plot_alt": None,
+                "plot_az": None,
+                "color": "m",
+            },
+            {
+                "name": 'STK',
+                "reader": STKReader,
+                "checker": STKChecker,
+                "index": self.index_stk,
+                "plot_alt": None,
+                "plot_az": None,
+                "color": "g",
 
-        self.widgets()
+            }
+        ]
 
-    def widgets(self):
+        self.length = get_cnt_satellites(self.data_folder) - 1
 
-        # Satellite name
-        self.object_name = get_elements.Get_name(self.index)
+        # self.widgets()
+        self._init_view()
 
-        # Default
-        available_predict = 'no'
-        available_pyephem = 'no'
-        available_pyorbital = 'no'
-        available_orbitron = 'no'
-        available_STK = 'no'
+    def _init_view(self):
+        self._init_plot()
+        self._init_data()
+        self._init_legend()
+        self._init_canvas()
+        self._init_comparation_plot()
 
-        actual_available = output_data.Check_data(
-            self.index,
-            self.object_name.name,
-            argv[3],
-            argv[4])
-        available_predict = actual_available.predict
-        available_pyephem = actual_available.pyephem
-        available_pyorbital = actual_available.pyorbital
-        available_orbitron = actual_available.orbitron
-        available_STK = actual_available.STK
-
+    def _init_plot(self):
         # Plot
-        self.f = Figure(figsize=(6, 7), dpi = 80)
+        self.f = Figure(figsize=(6, 7), dpi=80)
         self.text = self.f.suptitle(self.object_name.name, fontsize=16)
-#		self.f.suptitle(self.object_name.name, fontsize=16)
 
         # Subplots altitude & azimuth
-        self.a = self.f.add_subplot(211)
-        self.b = self.f.add_subplot(212)
+        self.plot_altitude = self.f.add_subplot(211)
+        self.plot_azimuth = self.f.add_subplot(212)
 
-        # Check if data is available and print it
-
-        if available_pyephem == 'yes':
-            figure_pyephem = output_data.Read_pyephem_data(self.pyephem)
-            pyephem_time = figure_pyephem.pyephem_simulation_time
-            pyephem_alt = figure_pyephem.pyephem_alt_satellite
-            self.plot_pyephem_alt, = self.a.plot(
-                pyephem_time, pyephem_alt, 'b', label='PyEphem')
-
-            pyephem_az = figure_pyephem.pyephem_az_satellite
-            self.plot_pyephem_az, = self.b.plot(
-                pyephem_time, pyephem_az, 'b', label='PyEphem')
-
-        if available_predict == 'yes':
-            figure_predict = output_data.Read_predict_data(self.predict)
-            predict_time = figure_predict.predict_simulation_time
-            predict_alt = figure_predict.predict_alt_satellite
-            self.plot_predict_alt, = self.a.plot(
-                predict_time, predict_alt, 'r', label='predict')
-
-            predict_az = figure_predict.predict_az_satellite
-            self.plot_predict_az, = self.b.plot(
-                predict_time, predict_az, 'r', label='predict')
-
-        if available_pyorbital == 'yes':
-            figure_pyorbital = output_data.Read_pyorbital_data(self.pyorbital)
-            pyorbital_time = figure_pyorbital.pyorbital_simulation_time
-            pyorbital_alt = figure_pyorbital.pyorbital_alt_satellite
-            self.plot_pyorbital_alt, = self.a.plot(
-                pyorbital_time, pyorbital_alt, 'y', label='pyorbital')
-
-            pyorbital_az = figure_pyorbital.pyorbital_az_satellite
-            self.plot_pyorbital_az, = self.b.plot(
-                pyorbital_time, pyorbital_az, 'y', label='pyorbital')
-
-        if available_orbitron == 'yes':
-            print((argv[4]))
-            figure_orbitron = output_data.Read_orbitron_data(
-                self.orbitron,
-                self.object_name.name,
-                argv[4])
-            orbitron_alt = figure_orbitron.orbitron_alt_satellite
-            orbitron_time = figure_orbitron.orbitron_time
-            self.plot_orbitron_alt, = self.a.plot(
-                orbitron_time, orbitron_alt, 'm', label='orbitron')
-
-            orbitron_az = figure_orbitron.orbitron_az_satellite
-            self.plot_orbitron_az, = self.b.plot(
-                orbitron_time, orbitron_az, 'm', label='orbitron')
-
-        if available_STK == 'yes':
-            figure_STK = output_data.Read_STK_data(self.STK, argv[3])
-            STK_alt = figure_STK.STK_alt_satellite
-            STK_time = figure_STK.STK_simulation_time
-            self.plot_STK_alt, = self.a.plot(
-                STK_time, STK_alt, 'g', label='STK')
-
-            STK_az = figure_STK.STK_az_satellite
-            self.plot_STK_az, = self.b.plot(STK_time, STK_az, 'g', label='STK')
-
-        self.a.legend(loc=2, borderaxespad=0., prop={'size': 12})
-        self.a.set_ylabel('Degrees')
+    def _init_legend(self):
+        self.plot_altitude.legend(loc=2, borderaxespad=0., prop={'size': 12})
+        self.plot_altitude.set_ylabel('Degrees')
         # Grid is on
-        self.a.grid(True)
+        self.plot_altitude.grid(True)
 
-        self.b.legend(loc=2, borderaxespad=0., prop={'size': 12})
-        self.b.set_ylabel('Degrees')
+        self.plot_azimuth.legend(loc=2, borderaxespad=0., prop={'size': 12})
+        self.plot_azimuth.set_ylabel('Degrees')
 
         # Grid is on
-        self.b.grid(True)
+        self.plot_azimuth.grid(True)
 
+    def _init_canvas(self):
         left_frame = tk.Frame(root, height=800, width=500, padx=5, pady=5)
         left_frame.grid(column=0, row=0, columnspan=1, rowspan=3)
 
@@ -171,12 +159,31 @@ class MainGUI(object):
         toolbar.update()
         self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=0)
 
+    def _init_data(self):
+
+        for program in self.progs:
+            if program.get('checker')(self.index, self.cur_sat) == 'yes':
+                data = program.get('reader')(self.data_folder,
+                                             program.get('index'))
+                alt_plot, = self.plot_altitude.plot(
+                    data.get_sim_time(), data.get_alts(), program.get('color'),
+                    label=program.get('name'))
+
+                az_plot, = self.plot_azimuth.plot(
+                    data.get_sim_time(), data.get_azs(), program.get('color'),
+                    label=program.get('name'))
+
+                program['plot_alt'] = alt_plot
+                program['plot_az'] = az_plot
+
+    def _init_comparation_plot(self):
+
         # Plot g
-        self.g = Figure(figsize=(6, 4), dpi = 80)
-        self.g.suptitle('Comparation', fontsize=16)
+        self.plot_comparation = Figure(figsize=(6, 4), dpi=80)
+        self.plot_comparation.suptitle('Comparation', fontsize=16)
 
         # Subplot c
-        self.c = self.g.add_subplot(111)
+        self.c = self.plot_comparation.add_subplot(111)
 
         right_frame = tk.Frame(root, height=330, width=500, bd=0)
         right_frame.grid(
@@ -188,9 +195,13 @@ class MainGUI(object):
             pady=5)
         right_frame.grid_propagate(0)
 
-        self.canvas2 = FigureCanvasTkAgg(self.g, master=right_frame)
+        self.canvas2 = FigureCanvasTkAgg(self.plot_comparation,
+                                         master=right_frame)
         self.canvas2.show()
         self.canvas2.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=0)
+
+    def widgets(self):
+
 
         data_frame = tk.LabelFrame(
             root,
@@ -795,7 +806,7 @@ class MainGUI(object):
             self.c.set_ylabel('Altitude - Degrees')
             self.c.grid(True)
 
-            self.g.canvas.draw()
+            self.plot_comparation.canvas.draw()
 
         elif self.list_of_simulations[index][8:12] == 'pred' and\
                 self.list_of_simulations[index][16:19] == 'Azi':
@@ -808,7 +819,7 @@ class MainGUI(object):
             self.c.set_ylabel('Azimuth - Degrees')
             self.c.grid(True)
 
-            self.g.canvas.draw()
+            self.plot_comparation.canvas.draw()
 
         elif self.list_of_simulations[index][8:12] == 'PyEp' and\
                 self.list_of_simulations[index][16:19] == 'Alt':
@@ -821,7 +832,7 @@ class MainGUI(object):
             self.c.set_ylabel('Altitude - Degrees')
             self.c.grid(True)
 
-            self.g.canvas.draw()
+            self.plot_comparation.canvas.draw()
 
         elif self.list_of_simulations[index][8:12] == 'PyEp' and\
                 self.list_of_simulations[index][16:19] == 'Azi':
@@ -834,7 +845,7 @@ class MainGUI(object):
             self.c.set_ylabel('Azimuth - Degrees')
             self.c.grid(True)
 
-            self.g.canvas.draw()
+            self.plot_comparation.canvas.draw()
 
         elif self.list_of_simulations[index][8:12] == 'PyOr' and\
                 self.list_of_simulations[index][18:21] == 'Alt':
@@ -847,7 +858,7 @@ class MainGUI(object):
             self.c.set_ylabel('Altitude - Degrees')
             self.c.grid(True)
 
-            self.g.canvas.draw()
+            self.plot_comparation.canvas.draw()
 
         elif self.list_of_simulations[index][8:12] == 'PyOr' and\
                 self.list_of_simulations[index][18:21] == 'Azi':
@@ -860,7 +871,7 @@ class MainGUI(object):
             self.c.set_ylabel('Azimuth - Degrees')
             self.c.grid(True)
 
-            self.g.canvas.draw()
+            self.plot_comparation.canvas.draw()
 
         elif self.list_of_simulations[index][8:12] == 'Orbi' and\
                 self.list_of_simulations[index][17:20] == 'Alt':
@@ -873,7 +884,7 @@ class MainGUI(object):
             self.c.set_ylabel('Altitude - Degrees')
             self.c.grid(True)
 
-            self.g.canvas.draw()
+            self.plot_comparation.canvas.draw()
 
         elif self.list_of_simulations[index][8:12] == 'Orbi' and\
                 self.list_of_simulations[index][17:20] == 'Azi':
@@ -886,7 +897,7 @@ class MainGUI(object):
             self.c.set_ylabel('Azimuth - Degrees')
             self.c.grid(True)
 
-            self.g.canvas.draw()
+            self.plot_comparation.canvas.draw()
 
     def save_routine(self):
 

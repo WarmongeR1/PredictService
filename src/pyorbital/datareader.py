@@ -11,7 +11,8 @@ class DataReader(BaseDataReader):
         super().__init__(*args)
         self.satellite_name = None
         self.files = []
-        self.data_folder = data_folder
+        self.reader_name = 'pyorbital'
+        self.data_folder = os.path.join(data_folder, self.reader_name)
         index_satellite += 1
         self._open()
         self.open_files(index_satellite)

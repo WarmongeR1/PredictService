@@ -13,7 +13,8 @@ class DataReader(BaseDataReader):
 
         self.lineas_validas = []
         self.satellite_name = None
-        self.data_folder = data_folder
+        self.reader_name = 'orbitron'
+        self.data_folder = os.path.join(data_folder, self.reader_name)
         self.files = []
         self.open_file(sat_selected)
 
