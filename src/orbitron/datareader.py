@@ -30,7 +30,7 @@ class DataReader(BaseDataReader):
         self.process_data(sat_name)
 
     def extract_data(self, line):
-        if line[0:4] == str(datetime.datetime.now().jear()):
+        if line[0:4] == str(datetime.datetime.now().year()):
             self.lineas_validas.append(line)
 
     def process_data(self, sat_selected):
