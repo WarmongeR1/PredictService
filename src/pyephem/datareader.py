@@ -9,9 +9,7 @@ class DataReader(BaseDataReader):
 
     def __init__(self, data_folder, index_satellite):
         super().__init__(data_folder, index_satellite)
-        self.simulation_time = []
-        self.alt_satellite = []
-        self.az_satellite = []
+
         self.satellite_name = None
         self.data_folder = data_folder
         self.files = []
@@ -39,8 +37,6 @@ class DataReader(BaseDataReader):
                 self.alt_satellite.append(float(line[1]))
                 self.az_satellite.append(float(line[2]))
 
-    def get(self):
-        return self.simulation_time, self.alt_satellite, self.az_satellite
 
 
 if __name__ == '__main__':

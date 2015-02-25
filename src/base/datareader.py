@@ -4,16 +4,27 @@
 class BaseDataReader(object):
 
     def __init__(self, *args):
-        pass
+        self.simulation_time = []
+        self.alt_satellite = []
+        self.az_satellite = []
 
     def _open(self):
-        pass
+        raise NotImplemented
 
     def open_files(self, index_satellite):
-        pass
+        raise NotImplemented
 
     def open_file(self, name):
-        pass
+        raise NotImplemented
 
     def get(self):
-        pass
+        return self.simulation_time, self.alt_satellite, self.az_satellite
+
+    def get_sim_time(self):
+        return self.simulation_time
+
+    def get_alts(self):
+        return self.alt_satellite
+
+    def get_azs(self):
+        return self.az_satellite
