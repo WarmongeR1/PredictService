@@ -3,6 +3,7 @@ import numpy
 
 
 class BaseComparator(object):
+
     def __init__(self, data_folder_first, data_folder_second, index_first,
                  index_second, first_reader, second_reader):
         self.data_folder_first = data_folder_first
@@ -74,7 +75,6 @@ class BaseComparator(object):
             list_az.append(difference_az)
 
         return time_intersected, list_alt, list_az
-
 
     def compare_deviation(self):
         _, list_alt, list_az = self._compare()
