@@ -23,6 +23,7 @@ import sys
 
 from src.gui import scrolledlist
 from src.utils import get_elements, output_data
+from src.utils.common import get_cnt_satellites
 
 
 if sys.version < '3':
@@ -51,8 +52,7 @@ class MainGUI(object):
         self.STK = 0
         self.orbitron = 0
 
-        object_elements = get_elements.Get_list_length()
-        self.length = object_elements.length - 1
+        self.length = get_cnt_satellites() - 1
 
         self.widgets()
 

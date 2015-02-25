@@ -1,12 +1,12 @@
 # -*- encoding: utf-8 -*-
 import sys
 
-from src.pyephem.propagator import Propagator
-from src.utils.tlereader import TleReader
+from src.pyorbital.propagator import Propagator
+from src.utils.tlereader import TLEReader
 
 """
-python ephem.py -i bin/TLEs/dmc.txt -s '2015-01-01 18:21:26'
-    -e '2015-01-02 18:21:26' -o ./bin/result/PyEphem
+python pyorbital.py -i bin/TLEs/dmc.txt -s '2015-01-01 18:21:26'
+    -e '2015-01-02 18:21:26' -o ./bin/result/PyOrbital
 """
 
 
@@ -32,7 +32,7 @@ def main():
         print('Not found filename')
         sys.exit(-1)
     else:
-        obj = TleReader()
+        obj = TLEReader()
         obj.read(options.input_file)
         Propagator(
             obj.get(), options.output_folder)

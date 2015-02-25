@@ -3,7 +3,7 @@ from datetime import datetime
 
 import os
 import sys
-
+from settings import PROGRAMMS
 
 def local_to_unix(year, month, day, hour, minute, second):
 
@@ -19,6 +19,25 @@ def local_to_unix(year, month, day, hour, minute, second):
 
     return unix_time
 
+def get_cnt_lines_in_file(filepath):
+    try:
+        with open(filepath, 'r') as fi:
+            return len([item.rstrip('\n') for item in fi.readlines()])
+    except Exception:
+        raise
+
+def get_cnt_satellites(data_folder):
+    result = 0
+    for programm in PROGRAMMS:
+        filepath = os.path.join(data_folder, programm, 'temp')
+        if os.path.exists(filepath):
+            result = get_cnt_lines_in_file(filepath)
+        else:
+            continue
+    else:
+        raise Exception("Not found results in folder %s" % data_folder)
+    # noinspection PyUnreachableCode
+    return result
 
 def get_satellite_names(filepath):
     with open(filepath, 'r') as fi:
@@ -40,14 +59,7 @@ def get_satellite_names(filepath):
 def generate_temp_files(tle_filepath, data_folder):
     satellites_list = get_satellite_names(tle_filepath)
 
-    programms = [
-        'PyEphem',
-        'predict',
-        'PyOrbital',
-        'Orbitron'
-    ]
-
-    for programm in programms:
+    for programm in PROGRAMMS:
         filepath = os.path.join(data_folder, programm, 'temp')
         with open(filepath, 'w') as fi:
             fi.writelines(['%s\n' % item for item in satellites_list])

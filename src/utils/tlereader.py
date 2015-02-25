@@ -3,7 +3,7 @@
 import sys
 
 
-class TleReader(object):
+class TLEReader(object):
 
     def __init__(self):
         self.show_satellite_list = []

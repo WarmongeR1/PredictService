@@ -2,9 +2,12 @@
 
 from math import degrees
 from os import getcwd, chdir
+import os
 
-import ephem
-from ephem import Observer, now
+import run_ephem
+from run_ephem import Observer, now
+from settings import PROGRAMMS
+from src.utils.common import get_cnt_lines_in_file
 
 
 class Get_elements(object):
@@ -65,7 +68,7 @@ class Get_elements(object):
 
     def pyephem_routine(self, name, line1, line2):
 
-        satellite = ephem.readtle(name, line1, line2)
+        satellite = run_ephem.readtle(name, line1, line2)
         satellite.compute(self.observer)
 
         # Inclinacion en grados.

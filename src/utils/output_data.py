@@ -23,8 +23,6 @@
 
 from os import getcwd
 
-import numpy
-
 
 class Read_data(object):
 
