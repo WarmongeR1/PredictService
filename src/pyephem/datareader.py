@@ -38,8 +38,3 @@ class DataReader(BaseDataReader):
                 self.az_satellite.append(float(line[2]))
 
 
-
-if __name__ == '__main__':
-    obj = DataReader(
-        '/home/warmonger/Develop/Github/propagators/bin/result/PyEphem', 1)
-    print(obj.get())

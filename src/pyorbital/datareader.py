@@ -9,9 +9,6 @@ class DataReader(BaseDataReader):
 
     def __init__(self, data_folder, index_satellite, *args):
         super().__init__(*args)
-        self.simulation_time = []
-        self.alt_satellite = []
-        self.az_satellite = []
         self.satellite_name = None
         self.files = []
         self.data_folder = data_folder
@@ -38,12 +35,3 @@ class DataReader(BaseDataReader):
                 self.simulation_time.append(int(line[0]))
                 self.alt_satellite.append(float(line[1]))
                 self.az_satellite.append(float(line[2]))
-
-    def get(self):
-        return self.simulation_time, self.alt_satellite, self.az_satellite
-
-
-if __name__ == '__main__':
-    obj = DataReader(
-        '/home/warmonger/Develop/Github/propagators/bin/result/PyOrbital', 1)
-    print(obj.get())

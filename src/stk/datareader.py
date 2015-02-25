@@ -16,10 +16,6 @@ class DataReader(BaseDataReader):
         self._open()
         self.open_files(index_satellite)
 
-        self.simulation_time = []
-        self.alt_satellite = []
-        self.az_satellite = []
-
     def _open(self):
 
         self.files_STK = listdir(self.data_folder)
@@ -46,8 +42,8 @@ class DataReader(BaseDataReader):
                 # Tengo que comprobar si la linea esta vacia
                 try:
                     valor = int((float(row[0]) - 2440587.5) * 86400)
-                    self.simulation_time.append(valor)
-                    self.az_satellite.append((row[1]))
-                    self.alt_satellite.append((row[2]))
-                except Exception:
-                    pass
+                    self.simulation_time.append(int(valor))
+                    self.az_satellite.append(float(row[1]))
+                    self.alt_satellite.append(float(row[2]))
+                except Exception as e:
+                    print(e)

@@ -1,47 +1,38 @@
 # -*- encoding: utf-8 -*-
 
+import csv
+import os
 
-class Read_predict_data:
+from src.base.datareader import BaseDataReader
 
-    def __init__(self, index_satellite):
 
-        import os
+class DataReader(BaseDataReader):
+    def __init__(self, data_folder, index_satellite):
+        super().__init__(data_folder, index_satellite)
 
-        index_satellite = index_satellite + 1
-        directorio_script = os.getcwd()
+        self.satellite_name = None
+        self.data_folder = data_folder
+        self.files = []
+        index_satellite += 1
+        self._open()
+        self.open_files(index_satellite)
 
-        # predict routine
-        self.open_predict(directorio_script)
-        self.open_files_predict(index_satellite)
+    def _open(self):
+        self.files = os.listdir(self.data_folder)
+        if 'temp' in self.files:
+            self.files.remove('temp')
+        self.files.sort()
 
-        os.chdir(directorio_script)
-
-    def open_predict(self, directorio_script):
-
-        import os
-
-        os.chdir(directorio_script + '/results/predict')
-
-        self.files_predict = os.listdir(os.getcwd())
-        self.files_predict.remove('temp')
-        self.files_predict.sort()
-
-    def open_files_predict(self, index_satellite):
+    def open_files(self, index_satellite):
 
         for i in range(index_satellite):
-            self.open_file_predict(self.files_predict[i])
+            self.open_file(self.files[i])
+            self.satellite_name = self.files[i]
 
-    def open_file_predict(self, name):
+    def open_file(self, name):
 
-        self.predict_simulation_time = []
-        self.predict_alt_satellite = []
-        self.predict_az_satellite = []
-
-        import csv
-
-        with open(name) as tsv:
+        with open(os.path.join(self.data_folder, name)) as tsv:
             for line in csv.reader(tsv, delimiter='\t'):
-                if float(line[1]) >= 0:
-                    self.predict_simulation_time.append(line[0])
-                    self.predict_alt_satellite.append(float(line[1]))
-                    self.predict_az_satellite.append(float(line[2]))
+                self.simulation_time.append(int(line[0]))
+                self.alt_satellite.append(float(line[1]))
+                self.az_satellite.append(float(line[2]))
