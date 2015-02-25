@@ -17,6 +17,7 @@ class TleReader(object):
         :return:
 
         """
+        # HINDI FUCKING CODE!!!!
 
         with open(filepath, 'r') as file:
             list_names_satellites = file.readlines()
@@ -31,7 +32,7 @@ class TleReader(object):
         else:
             y = length_list // 3
 
-        list_numbers = list(map(self.return_list, list(range(y))))
+        list_numbers = [x * 3 for x in range(y)]
 
         self.show_satellite_list = []
         self.tle_first_line_list = []
@@ -49,9 +50,6 @@ class TleReader(object):
             self.tle_second_line_list.append(list_names_satellites[tle2])
             tle1 = list_numbers[tle0] + 4
             tle2 = list_numbers[tle0] + 5
-
-    def return_list(self, x):
-        return 3 * x
 
     def get(self):
         return self.show_satellite_list, \
