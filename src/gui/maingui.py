@@ -20,18 +20,14 @@
 # Author: s.gongoragarcia[at]gmail.com
 ##########################################################################
 import sys
-from src.comparators.comparator import compare
 
 from src.gui import scrolledlist
-from src.utils import get_elements, output_data
 from src.utils.common import get_cnt_satellites, get_name
-
 from src.predict.datareader import DataReader as PredictReader
 from src.pyephem.datareader import DataReader as PyEphemReader
 from src.pyorbital.datareader import DataReader as PyOrbitalReader
 from src.orbitron.datareader import DataReader as OrbitronReader
 from src.stk.datareader import DataReader as STKReader
-
 from src.predict.datachecker import DataChecker as PredictChecker
 from src.pyephem.datachecker import DataChecker as PyEphemChecker
 from src.pyorbital.datachecker import DataChecker as PyOrbitalChecker
@@ -56,7 +52,6 @@ from sys import argv
 class MainGUI(object):
 
     def __init__(self):
-
         self.index = 0
         self.cur_sat = ''
         self.index_pyephem = 0
@@ -140,7 +135,7 @@ class MainGUI(object):
     def _init_plot(self):
         # Plot
         self.f = Figure(figsize=(6, 7), dpi=80)
-        self.text = self.f.suptitle(self.object_name.name, fontsize=16)
+        self.text = self.f.suptitle(self.cur_sat, fontsize=16)
 
         # Subplots altitude & azimuth
         self.plot_altitude = self.f.add_subplot(211)
@@ -243,7 +238,7 @@ class MainGUI(object):
         label_name.grid(column=0, row=0, columnspan=1, rowspan=1, sticky=tk.W)
 
         self.text_name = tk.StringVar()
-        object_name = get_elements.Get_name(self.index)
+        object_name = get_name(self.index, self.data_folder)
         self.text_name.set(object_name.name)
 
         name = tk.Label(self.data_frame, textvariable=self.text_name)
@@ -430,33 +425,13 @@ class MainGUI(object):
             self.forward.configure(state=tk.NORMAL)
             self.next.configure(state=tk.NORMAL)
 
-    def __next__(self):
 
-        self.index = self.index + 1
-
-        self.object_name = get_elements.Get_name(self.index)
-
-        available = output_data.Check_data(
-            self.index,
-            self.object_name.name,
-            argv[3],
-            argv[4])
-
-        available_predict = available.predict
-        if available_predict == 'yes':
-            self.predict = self.predict + 1
-        available_pyephem = available.pyephem
-        if available_pyephem == 'yes':
-            self.pyephem = self.pyephem + 1
-        available_pyorbital = available.pyorbital
-        if available_pyorbital == 'yes':
-            self.pyorbital = self.pyorbital + 1
-        available_orbitron = available.orbitron
-        if available_orbitron == 'yes':
-            self.orbitron = self.orbitron + 1
-        available_STK = available.STK
-        if available_STK == 'yes':
-            self.STK = self.STK + 1
+    def _step_action(self):
+        self.cur_sat = get_name(self.index, self.data_folder)
+        for program in self.progs:
+            if program.get('checker')(program.get('index'), self.cur_sat,
+                                      self.data_folder) == 'yes':
+                program['index'] = program.get('index') + 1
 
         self.cur_sat = get_name(self.index, self.data_folder)
         self.text.set_text(self.cur_sat)
@@ -490,114 +465,7 @@ class MainGUI(object):
             self.forward.configure(state=tk.NORMAL)
             self.next.configure(state=tk.NORMAL)
 
-    def forward(self):
-
-        self.index = self.index - 1
-
-        self.object_name = get_elements.Get_name(self.index)
-
-        available = output_data.Check_data(
-            self.index,
-            self.object_name.name,
-            argv[3],
-            argv[4])
-
-        available_predict = available.predict
-        if available_predict == 'yes':
-            self.predict = self.predict - 1
-        available_pyephem = available.pyephem
-        if available_pyephem == 'yes':
-            self.pyephem = self.pyephem - 1
-        available_pyorbital = available.pyorbital
-        if available_pyorbital == 'yes':
-            self.pyorbital = self.pyorbital - 1
-        available_orbitron = available.orbitron
-        if available_orbitron == 'yes':
-            self.orbitron = self.orbitron - 1
-        available_STK = available.STK
-        if available_STK == 'yes':
-            self.STK = self.STK - 1
-
-        figure = output_data.Read_data(self.pyephem, self.predict, self.pyorbital,
-                                       self.orbitron, self.object_name.name, self.STK, argv[3], argv[4])
-
-        # Available
-        actual_available = output_data.Check_data(
-            self.index,
-            self.object_name.name,
-            argv[3],
-            argv[4])
-        available_predict = actual_available.predict
-        available_pyephem = actual_available.pyephem
-        available_pyorbital = actual_available.pyorbital
-        available_orbitron = actual_available.orbitron
-        available_STK = actual_available.STK
-
-        object_name = get_elements.Get_name(self.index)
-
-        self.text.set_text(object_name.name)
-
-        if available_pyephem == 'yes':
-            figure_pyephem = output_data.Read_pyephem_data(self.pyephem)
-            pyephem_time = figure_pyephem.pyephem_simulation_time
-
-            pyephem_alt = figure_pyephem.pyephem_alt_satellite
-            self.plot_pyephem_alt.set_ydata(pyephem_alt)
-            self.plot_pyephem_alt.set_xdata(pyephem_time)
-
-            pyephem_az = figure_pyephem.pyephem_az_satellite
-            self.plot_pyephem_az.set_ydata(pyephem_az)
-            self.plot_pyephem_az.set_xdata(pyephem_time)
-
-        if available_predict == 'yes':
-            figure_predict = output_data.Read_predict_data(self.predict)
-            predict_time = figure_predict.predict_simulation_time
-
-            predict_alt = figure_predict.predict_alt_satellite
-            self.plot_predict_alt.set_ydata(predict_alt)
-            self.plot_predict_alt.set_xdata(predict_time)
-
-            predict_az = figure_predict.predict_az_satellite
-            self.plot_predict_az.set_ydata(predict_az)
-            self.plot_predict_az.set_xdata(predict_time)
-
-        if available_pyorbital == 'yes':
-            figure_pyorbital = output_data.Read_pyorbital_data(self.pyorbital)
-            pyorbital_time = figure_pyorbital.pyorbital_simulation_time
-
-            pyorbital_alt = figure_pyorbital.pyorbital_alt_satellite
-            self.plot_pyorbital_alt.set_ydata(pyorbital_alt)
-            self.plot_pyorbital_alt.set_xdata(pyorbital_time)
-
-            pyorbital_az = figure_pyorbital.pyorbital_az_satellite
-            self.plot_pyorbital_az.set_ydata(pyorbital_az)
-            self.plot_pyorbital_az.set_xdata(pyorbital_time)
-
-        if available_orbitron == 'yes':
-            figure_orbitron = output_data.Read_orbitron_data(self.orbitron,
-                                                             self.object_name.name, argv[4])
-
-            orbitron_time = figure_orbitron.orbitron_time
-            orbitron_alt = figure_orbitron.orbitron_alt_satellite
-            self.plot_orbitron_alt.set_ydata(orbitron_alt)
-            self.plot_orbitron_alt.set_xdata(orbitron_time)
-
-            orbitron_az = figure_orbitron.orbitron_az_satellite
-            self.plot_orbitron_az.set_ydata(orbitron_az)
-            self.plot_orbitron_az.set_xdata(orbitron_time)
-
-        if available_STK == 'yes':
-            figure_STK = output_data.Read_STK_data(self.STK, argv[3])
-
-            STK_alt = figure_STK.STK_alt_satellite
-            STK_time = figure_STK.STK_simulation_time
-            self.plot_STK_alt.set_ydata(STK_alt)
-            self.plot_STK_alt.set_xdata(STK_time)
-
-            STK_az = figure_STK.STK_az_satellite
-            self.plot_STK_az.set_ydata(STK_az)
-            self.plot_STK_az.set_xdata(STK_time)
-
+    def _redraw(self):
         self.f.canvas.draw()
 
         # Subplot c
@@ -613,6 +481,17 @@ class MainGUI(object):
         else:
             self.forward.configure(state=tk.NORMAL)
             self.next.configure(state=tk.NORMAL)
+
+    def __next__(self):
+        self.index += 1
+        self._step_action()
+        self._redraw()
+
+    def forward(self):
+
+        self.index -= 1
+        self._step_action()
+        self._redraw()
 
     def sims_availables(self, available_predict, available_pyephem,
                         available_pyorbital, available_orbitron, available_STK):
@@ -773,7 +652,7 @@ class MainGUI(object):
 
         for i in range(self.length):
 
-            object_name = get_elements.Get_name(i)
+            object_name = get_name(i, self.data_folder)
 
             text.append(' Satellite: %s' % (object_name.name))
 
