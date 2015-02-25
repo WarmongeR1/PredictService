@@ -518,7 +518,8 @@ class MainGUI(object):
     def pick_simulation(self, index):
 
         comparation = Read_data(self.pyephem, self.predict, self.pyorbital,
-                                self.orbitron, self.object_name.name, self.STK, argv[3], argv[4])
+                                self.orbitron, self.object_name.name, self.STK,
+                                argv[3], argv[4])
 
         if self.list_of_simulations[index][8:12] == 'pred' and\
                 self.list_of_simulations[index][16:19] == 'Alt':
