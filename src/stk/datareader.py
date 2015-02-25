@@ -39,7 +39,6 @@ class DataReader(BaseDataReader):
         with open(name, 'rb') as open_file:
             reader = csv.reader(open_file)
             for row in reader:
-                # Tengo que comprobar si la linea esta vacia
                 try:
                     valor = int((float(row[0]) - 2440587.5) * 86400)
                     self.simulation_time.append(int(valor))
