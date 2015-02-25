@@ -19,9 +19,9 @@ class Window(object):
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry("500x400")
+        self.root.geometry('500x400')
         self.root.resizable(0, 0)
-        self.root.title("Configure simulations")
+        self.root.title('Configure simulations')
 
         self.site()
         self.time()
@@ -34,7 +34,7 @@ class Window(object):
             self.root,
             height=100,
             width=150,
-            text="Site settings")
+            text='Site settings')
         site_frame.grid(column=0, row=0, columnspan=1, rowspan=1)
 
         site = ScrolledList(site_frame, width=20, height=3)
@@ -45,14 +45,14 @@ class Window(object):
             self.root,
             height=100,
             width=150,
-            text="Time settings")
+            text='Time settings')
         time_frame.grid(column=1, row=0, columnspan=1, rowspan=1)
 
-        time_now = Radiobutton(time_frame, text="Now", variable=time, value=1)
+        time_now = Radiobutton(time_frame, text='Now', variable=time, value=1)
         time_now.grid(column=0, row=0, columnspan=1, rowspan=1)
         time_selection = Radiobutton(
             time_frame,
-            text="Select",
+            text='Select',
             variable=time,
             value=2)
         time_selection.grid(column=0, row=1, columnspan=1, rowspan=1)
@@ -65,7 +65,7 @@ class Window(object):
             self.root,
             height=100,
             width=150,
-            text="Family selection")
+            text='Family selection')
         families_frame.grid(column=1, row=1, columnspan=1, rowspan=1)
 
         family = scrolledlist.ScrolledList(families_frame, width=20, height=4)

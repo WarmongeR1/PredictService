@@ -11,10 +11,11 @@ class TleReader(object):
         self.tle_second_line_list = []
 
     def read(self, filepath):
-        """
-        Read file and generate 3 lists with TLE lines
+        """Read file and generate 3 lists with TLE lines.
+
         :param filepath:
         :return:
+
         """
 
         with open(filepath, 'r') as file:

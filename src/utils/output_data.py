@@ -528,7 +528,7 @@ class Read_data(object):
         self.predict_az_satellite = []
 
         with open(name) as tsv:
-            for line in csv.reader(tsv, delimiter="\t"):
+            for line in csv.reader(tsv, delimiter='\t'):
                 self.predict_simulation_time.append(int(line[0]))
                 self.predict_alt_satellite.append(float(line[1]))
                 self.predict_az_satellite.append(float(line[2]))
@@ -547,7 +547,7 @@ class Read_data(object):
         copy_names = [item.rstrip('\n\r') for item in copy_names]
         copy_names = [item.strip() for item in copy_names]
 
-        satellite = copy_names[index_satellite].replace(" ", "_")
+        satellite = copy_names[index_satellite].replace(' ', '_')
 
         i = 0
 

@@ -28,7 +28,7 @@ class Read_STK_data(object):
         copy_names = [item.rstrip('\n\r') for item in copy_names]
         copy_names = [item.strip() for item in copy_names]
 
-        satellite = copy_names[index_satellite].replace(" ", "_")
+        satellite = copy_names[index_satellite].replace(' ', '_')
 
         i = 0
 
@@ -63,6 +63,3 @@ class Read_STK_data(object):
                     self.STK_alt_satellite.append((row[2]))
                 except:
                     pass
-
-
-

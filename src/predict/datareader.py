@@ -40,7 +40,7 @@ class Read_predict_data:
         import csv
 
         with open(name) as tsv:
-            for line in csv.reader(tsv, delimiter="\t"):
+            for line in csv.reader(tsv, delimiter='\t'):
                 if float(line[1]) >= 0:
                     self.predict_simulation_time.append(line[0])
                     self.predict_alt_satellite.append(float(line[1]))

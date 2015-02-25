@@ -56,7 +56,7 @@ class BasePropagator(object):
     def get_location(self):
         # todo
         # вынести в нормальный конфиг
-        open_file = open(os.getenv("HOME") + '/.predict/predict.qth')
+        open_file = open(os.getenv('HOME') + '/.predict/predict.qth')
         lines = open_file.readlines()
         lines = [item.rstrip('\n') for item in lines]
 
@@ -72,9 +72,9 @@ class BasePropagator(object):
 
     def save(self, output_filepath, time, alt, az):
         with open(output_filepath, 'a') as file:
-            file.writelines("%d\t" % time)
-            file.writelines("%0.6f\t" % alt)
-            file.writelines("%0.6f\n" % az)
+            file.writelines('%d\t' % time)
+            file.writelines('%0.6f\t' % alt)
+            file.writelines('%0.6f\n' % az)
 
     def predict(self, param, param1, param2, i):
         raise NotImplemented

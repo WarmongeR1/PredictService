@@ -13,33 +13,33 @@ else:
     from tkinter import *
 
 
-DEFAULT_WIDTH = "40"
-DEFAULT_HEIGHT = "25"
+DEFAULT_WIDTH = '40'
+DEFAULT_HEIGHT = '25'
 
 
 class ScrolledList(Frame):
 
     """A compound widget containing a listbox and up to two scrollbars.
 
-      State/invariants:
-        .listbox:      [ The Listbox widget ]
-        .vScrollbar:
-           [ if self has a vertical scrollbar ->
-               that scrollbar
-             else -> None ]
-        .hScrollbar:
-           [ if self has a vertical scrollbar ->
-               that scrollbar
-             else -> None ]
-        .callback:     [ as passed to constructor ]
-        .vscroll:      [ as passed to constructor ]
-        .hscroll:      [ as passed to constructor ]
+    State/invariants:
+      .listbox:      [ The Listbox widget ]
+      .vScrollbar:
+         [ if self has a vertical scrollbar ->
+             that scrollbar
+           else -> None ]
+      .hScrollbar:
+         [ if self has a vertical scrollbar ->
+             that scrollbar
+           else -> None ]
+      .callback:     [ as passed to constructor ]
+      .vscroll:      [ as passed to constructor ]
+      .hscroll:      [ as passed to constructor ]
+
     """
 
     def __init__(self, master=None, width=DEFAULT_WIDTH,
                  height=DEFAULT_HEIGHT, vscroll=1, hscroll=0, callback=None):
-        """Constructor for ScrolledList.
-        """
+        """Constructor for ScrolledList."""
 
         Frame.__init__(self, master)
 
@@ -53,8 +53,7 @@ class ScrolledList(Frame):
         self.__createWidgets()
 
     def __createWidgets(self):
-        """Lay out internal widgets.
-        """
+        """Lay out internal widgets."""
 
         # [ if self.vscroll ->
         #     self  :=  self with a vertical Scrollbar widget added
@@ -86,8 +85,8 @@ class ScrolledList(Frame):
         #         self.listbox can reposition it
         #   else -> I ]
         if self.vscroll:
-            self.listbox["yscrollcommand"] = self.vScrollbar.set
-            self.vScrollbar["command"] = self.listbox.yview
+            self.listbox['yscrollcommand'] = self.vScrollbar.set
+            self.vScrollbar['command'] = self.listbox.yview
 
         # [ if self.hscroll ->
         #     self.listbox  :=  self.listbox linked so that
@@ -96,17 +95,16 @@ class ScrolledList(Frame):
         #         self.listbox can reposition it
         #   else -> I ]
         if self.hscroll:
-            self.listbox["xscrollcommand"] = self.hScrollbar.set
-            self.hScrollbar["command"] = self.listbox.xview
+            self.listbox['xscrollcommand'] = self.hScrollbar.set
+            self.hScrollbar['command'] = self.listbox.xview
 
         # [ self.listbox  :=  self.listbox with an event handler
         #       for button-1 clicks that causes self.callback
         #       to be called if there is one ]
-        self.listbox.bind("<Button-1>", self.__clickHandler)
+        self.listbox.bind('<Button-1>', self.__clickHandler)
 
     def __clickHandler(self, event):
-        """Called when the user clicks on a line in the listbox.
-        """
+        """Called when the user clicks on a line in the listbox."""
 
         if not self.callback:
             return
@@ -119,27 +117,23 @@ class ScrolledList(Frame):
         self.listbox.focus_set()
 
     def count(self):
-        """Return the number of lines in use in the listbox.
-        """
+        """Return the number of lines in use in the listbox."""
         return self.listbox.size()
 
     def __getitem__(self, k):
-        """Get the (k)th line from the listbox.
-        """
+        """Get the (k)th line from the listbox."""
 
         if 0 <= k < self.count():
             return self.listbox.get(k)
         else:
-            raise IndexError("ScrolledList[%d] out of range." % k)
+            raise IndexError('ScrolledList[%d] out of range.' % k)
 
     def append(self, text):
-        """Append a line to the listbox.
-        """
+        """Append a line to the listbox."""
         self.listbox.insert(END, text)
 
     def insert(self, linex, text):
-        """Insert a line between two existing lines.
-        """
+        """Insert a line between two existing lines."""
 
         if 0 <= linex < self.count():
             where = linex
@@ -149,12 +143,10 @@ class ScrolledList(Frame):
         self.listbox.insert(where, text)
 
     def delete(self, linex):
-        """Delete a line from the listbox.
-        """
+        """Delete a line from the listbox."""
         if 0 <= linex < self.count():
             self.listbox.delete(linex)
 
     def clear(self):
-        """Remove all lines.
-        """
+        """Remove all lines."""
         self.listbox.delete(0, END)

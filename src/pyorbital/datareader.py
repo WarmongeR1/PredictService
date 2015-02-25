@@ -33,7 +33,7 @@ class DataReader(BaseDataReader):
     def open_file(self, name):
 
         with open(os.path.join(self.data_folder, name)) as tsv:
-            for line in csv.reader(tsv, delimiter="\t"):
+            for line in csv.reader(tsv, delimiter='\t'):
                 self.simulation_time.append(int(line[0]))
                 self.alt_satellite.append(float(line[1]))
                 self.az_satellite.append(float(line[2]))
