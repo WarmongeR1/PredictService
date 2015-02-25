@@ -14,21 +14,22 @@ class DataReader(BaseDataReader):
         self.az_satellite = []
         self.satellite_name = None
         self.data_folder = data_folder
+        self.files = []
         index_satellite += 1
         self._open()
         self.open_files(index_satellite)
 
     def _open(self):
-        self.files_pyephem = os.listdir(self.data_folder)
-        if 'temp' in self.files_pyephem:
-            self.files_pyephem.remove('temp')
-        self.files_pyephem.sort()
+        self.files = os.listdir(self.data_folder)
+        if 'temp' in self.files:
+            self.files.remove('temp')
+        self.files.sort()
 
     def open_files(self, index_satellite):
 
         for i in range(index_satellite):
-            self.open_file(self.files_pyephem[i])
-            self.satellite_name = self.files_pyephem[i]
+            self.open_file(self.files[i])
+            self.satellite_name = self.files[i]
 
     def open_file(self, name):
 
