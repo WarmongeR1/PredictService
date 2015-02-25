@@ -5,7 +5,7 @@ from src.base.datachecker import BaseDataChecker
 
 class DataChecker(BaseDataChecker):
 
-    def ckeck(self, index, sat_name):
+    def check(self, index, sat_name):
 
         file = os.path.join(self.data_folder, 'output.txt')
 
