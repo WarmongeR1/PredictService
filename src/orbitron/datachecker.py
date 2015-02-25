@@ -5,6 +5,11 @@ from src.base.datachecker import BaseDataChecker
 
 class DataChecker(BaseDataChecker):
 
+    def __init__(self, index_satellite, sat_name, folder):
+        super().__init__(index_satellite, sat_name, folder)
+        self.checker_name = 'orbitron'
+        self.data_folder = os.path.join(self.data_folder, self.checker_name)
+
     def check(self, index, sat_name):
 
         file = os.path.join(self.data_folder, 'output.txt')

@@ -23,7 +23,7 @@ import sys
 
 from src.gui import scrolledlist
 from src.utils import get_elements, output_data
-from src.utils.common import get_cnt_satellites
+from src.utils.common import get_cnt_satellites, get_name
 
 from src.predict.datareader import DataReader as PredictReader
 from src.pyephem.datareader import DataReader as PyEphemReader
@@ -36,7 +36,6 @@ from src.pyephem.datachecker import DataChecker as PyEphemChecker
 from src.pyorbital.datachecker import DataChecker as PyOrbitalChecker
 from src.orbitron.datachecker import DataChecker as OrbitronChecker
 from src.stk.datachecker import DataChecker as STKChecker
-
 
 
 if sys.version < '3':
@@ -68,47 +67,47 @@ class MainGUI(object):
 
         self.progs = [
             {
-                "name": 'PyEphem',
-                "reader": PyEphemReader,
-                "checker": PyEphemChecker,
-                "index": self.index_pyephem,
-                "plot_alt": None,
-                "plot_az": None,
-                "color": "b",
+                'name': 'PyEphem',
+                'reader': PyEphemReader,
+                'checker': PyEphemChecker,
+                'index': self.index_pyephem,
+                'plot_alt': None,
+                'plot_az': None,
+                'color': 'b',
             },
             {
-                "name": 'predict',
-                "reader": PredictReader,
-                "checker": PredictChecker,
-                "index": self.index_predict,
-                "color": "r",
+                'name': 'predict',
+                'reader': PredictReader,
+                'checker': PredictChecker,
+                'index': self.index_predict,
+                'color': 'r',
             },
             {
-                "name": 'orbitron',
-                "reader": OrbitronReader,
-                "checker": PredictChecker,
-                "index": self.index_orbitron,
-                "plot_alt": None,
-                "plot_az": None,
-                "color": "y",
+                'name': 'orbitron',
+                'reader': OrbitronReader,
+                'checker': OrbitronChecker,
+                'index': self.index_orbitron,
+                'plot_alt': None,
+                'plot_az': None,
+                'color': 'y',
             },
             {
-                "name": 'pyorbital',
-                "reader": PyOrbitalReader,
-                "checker": PyOrbitalChecker,
-                "index": self.index_pyorbital,
-                "plot_alt": None,
-                "plot_az": None,
-                "color": "m",
+                'name': 'pyorbital',
+                'reader': PyOrbitalReader,
+                'checker': PyOrbitalChecker,
+                'index': self.index_pyorbital,
+                'plot_alt': None,
+                'plot_az': None,
+                'color': 'm',
             },
             {
-                "name": 'STK',
-                "reader": STKReader,
-                "checker": STKChecker,
-                "index": self.index_stk,
-                "plot_alt": None,
-                "plot_az": None,
-                "color": "g",
+                'name': 'STK',
+                'reader': STKReader,
+                'checker': STKChecker,
+                'index': self.index_stk,
+                'plot_alt': None,
+                'plot_az': None,
+                'color': 'g',
 
             }
         ]
@@ -124,6 +123,8 @@ class MainGUI(object):
         self._init_legend()
         self._init_canvas()
         self._init_comparation_plot()
+        self._init_labels()
+        self._init_control_frame()
 
     def _init_plot(self):
         # Plot
@@ -162,7 +163,8 @@ class MainGUI(object):
     def _init_data(self):
 
         for program in self.progs:
-            if program.get('checker')(self.index, self.cur_sat) == 'yes':
+            if program.get('checker')(program.get("index"), self.cur_sat,
+                                      self.data_folder) == 'yes':
                 data = program.get('reader')(self.data_folder,
                                              program.get('index'))
                 alt_plot, = self.plot_altitude.plot(
@@ -200,66 +202,65 @@ class MainGUI(object):
         self.canvas2.show()
         self.canvas2.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=0)
 
-    def widgets(self):
-
-
-        data_frame = tk.LabelFrame(
+    def _init_data_frame(self):
+        self.data_frame = tk.LabelFrame(
             root,
             text='Data',
             height=215,
             width=500,
             padx=5,
             pady=5)
-        data_frame.grid(column=1, row=1, columnspan=1, rowspan=1)
-        data_frame.columnconfigure(0, minsize=110)
-        data_frame.columnconfigure(1, minsize=65)
-        data_frame.columnconfigure(2, minsize=110)
-        data_frame.columnconfigure(3, minsize=110)
-        data_frame.rowconfigure(0, minsize=25)
-        data_frame.rowconfigure(1, minsize=25)
-        data_frame.rowconfigure(2, minsize=20)
-        data_frame.rowconfigure(3, minsize=20)
-        data_frame.rowconfigure(4, minsize=20)
-        data_frame.rowconfigure(5, minsize=20)
-        data_frame.rowconfigure(6, minsize=20)
-        data_frame.rowconfigure(7, minsize=20)
+        self.data_frame.grid(column=1, row=1, columnspan=1, rowspan=1)
+        self.data_frame.columnconfigure(0, minsize=110)
+        self.data_frame.columnconfigure(1, minsize=65)
+        self.data_frame.columnconfigure(2, minsize=110)
+        self.data_frame.columnconfigure(3, minsize=110)
+        self.data_frame.rowconfigure(0, minsize=25)
+        self.data_frame.rowconfigure(1, minsize=25)
+        self.data_frame.rowconfigure(2, minsize=20)
+        self.data_frame.rowconfigure(3, minsize=20)
+        self.data_frame.rowconfigure(4, minsize=20)
+        self.data_frame.rowconfigure(5, minsize=20)
+        self.data_frame.rowconfigure(6, minsize=20)
+        self.data_frame.rowconfigure(7, minsize=20)
 
-        data_frame.grid_propagate(0)
+        self.data_frame.grid_propagate(0)
 
+    def _init_labels(self):
         # Name
-        label_name = tk.Label(data_frame, text='Name')
+        label_name = tk.Label(self.data_frame, text='Name')
         label_name.grid(column=0, row=0, columnspan=1, rowspan=1, sticky=tk.W)
 
         self.text_name = tk.StringVar()
         object_name = get_elements.Get_name(self.index)
         self.text_name.set(object_name.name)
 
-        name = tk.Label(data_frame, textvariable=self.text_name)
+        name = tk.Label(self.data_frame, textvariable=self.text_name)
         name.grid(column=1, row=0, columnspan=1, rowspan=1, sticky=tk.E)
 
         # Inclination
         elements = get_elements.Get_elements(argv[1], self.index)
-        label_incl = tk.Label(data_frame, text='Inclination')
+        label_incl = tk.Label(self.data_frame, text='Inclination')
         label_incl.grid(column=2, row=0, columnspan=1, rowspan=1, sticky=tk.W)
 
         self.text_incl = tk.DoubleVar()
         self.text_incl.set(elements.inclination)
 
-        incl = tk.Label(data_frame, textvariable=self.text_incl)
+        incl = tk.Label(self.data_frame, textvariable=self.text_incl)
         incl.grid(column=3, row=0, columnspan=1, rowspan=1, sticky=tk.E)
 
         # File
-        file_name = tk.Label(data_frame, text='File')
+        file_name = tk.Label(self.data_frame, text='File')
         file_name.grid(column=0, row=1, columnspan=1, rowspan=1, sticky=tk.W)
 
         self.file_name = tk.StringVar()
         self.file_name.set(argv[1])
 
-        file_ = tk.Label(data_frame, textvariable=self.file_name)
+        file_ = tk.Label(self.data_frame, textvariable=self.file_name)
         file_.grid(column=1, row=1, columnspan=1, rowspan=1, sticky=tk.E)
 
         # Mean motion
-        label_motion = tk.Label(data_frame, text='Mean motion')
+        label_motion = tk.Label(self.data_frame, text='Mean motion')
         label_motion.grid(
             column=2,
             row=1,
@@ -270,16 +271,16 @@ class MainGUI(object):
         self.text_motion = tk.DoubleVar()
         self.text_motion.set(elements.mean_motion)
 
-        motion = tk.Label(data_frame, textvariable=self.text_motion)
+        motion = tk.Label(self.data_frame, textvariable=self.text_motion)
         motion.grid(column=3, row=1, columnspan=1, rowspan=1, sticky=tk.E)
 
-        label_sims = tk.Label(data_frame, text='Simulations availables')
+        label_sims = tk.Label(self.data_frame, text='Simulations availables')
         label_sims.grid(column=0, row=2, columnspan=2, rowspan=1, sticky=tk.W)
 
         # Generate data
 
         sims_availables = scrolledlist.ScrolledList(
-            data_frame,
+            self.data_frame,
             width=16,
             height=3,
             callback=self.pick_simulation)
@@ -302,16 +303,16 @@ class MainGUI(object):
             sims_availables.append(self.list_of_simulations[i])
 
         # STD
-        label_std = tk.Label(data_frame, text='Standard desviation')
+        label_std = tk.Label(self.data_frame, text='Standard desviation')
         label_std.grid(column=2, row=2, columnspan=1, rowspan=1, sticky=tk.W)
 
         std_button = tk.Button(
-            data_frame,
+            self.data_frame,
             text='Get data',
             command=self.std_simulations)
         std_button.grid(column=3, row=2, columnspan=1, rowspan=1, sticky=tk.E)
 
-        label_std_alt = tk.Label(data_frame, text='Altitude')
+        label_std_alt = tk.Label(self.data_frame, text='Altitude')
         label_std_alt.grid(
             column=2,
             row=3,
@@ -319,7 +320,7 @@ class MainGUI(object):
             rowspan=1,
             sticky=tk.E)
 
-        label_std_az = tk.Label(data_frame, text='Azimuth')
+        label_std_az = tk.Label(self.data_frame, text='Azimuth')
         label_std_az.grid(
             column=3,
             row=3,
@@ -327,152 +328,52 @@ class MainGUI(object):
             rowspan=1,
             sticky=tk.E)
 
-        # PyEphem STD
-        text_std_pyephem = tk.Label(data_frame, text='PyEphem')
-        text_std_pyephem.grid(
-            column=1,
-            row=4,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
+        row_cnt = 3
+        for program in self.progs:
+            row_cnt += 1
 
-        self.text_std_pyephem_alt = tk.DoubleVar()
-        self.text_std_pyephem_alt.set('PyEphem alt.')
+            text_std = tk.Label(self.data_frame, text=program.get('name'))
+            text_std.grid(
+                column=1,
+                row=row_cnt,
+                columnspan=1,
+                rowspan=1,
+                sticky=tk.E)
 
-        std_pyephem_alt = tk.Label(
-            data_frame,
-            textvariable=self.text_std_pyephem_alt)
-        std_pyephem_alt.grid(
-            column=2,
-            row=4,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
+            program['std_alt_value'] = tk.DoubleVar()
+            program['std_alt_value'].set('%s alt.' % program.get('name'))
 
-        self.text_std_pyephem_az = tk.DoubleVar()
-        self.text_std_pyephem_az.set('PyePhem az.')
+            std_alt = tk.Label(
+                self.data_frame,
+                textvariable=program.get('std_alt_value'))
+            std_alt.grid(
+                column=2,
+                row=row_cnt,
+                columnspan=1,
+                rowspan=1,
+                sticky=tk.E)
 
-        std_pyephem_az = tk.Label(
-            data_frame,
-            textvariable=self.text_std_pyephem_az)
-        std_pyephem_az.grid(
-            column=3,
-            row=4,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
+            program['std_az_value'] = tk.DoubleVar()
+            program['std_az_value'].set('%s az.' % program.get('name'))
 
-        # predict STD
-        text_std_predict = tk.Label(data_frame, text='predict')
-        text_std_predict.grid(
-            column=1,
-            row=5,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
-
-        self.text_std_predict_alt = tk.DoubleVar()
-        self.text_std_predict_alt.set('predict alt.')
-
-        std_predict_alt = tk.Label(
-            data_frame,
-            textvariable=self.text_std_predict_alt)
-        std_predict_alt.grid(
-            column=2,
-            row=5,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
-
-        self.text_std_predict_az = tk.DoubleVar()
-        self.text_std_predict_az.set('predict az.')
-
-        std_predict_az = tk.Label(
-            data_frame,
-            textvariable=self.text_std_predict_az)
-        std_predict_az.grid(
-            column=3,
-            row=5,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
+            std_pyephem_az = tk.Label(
+                self.data_frame,
+                textvariable=program.get('std_az_value'))
+            std_pyephem_az.grid(
+                column=3,
+                row=row_cnt,
+                columnspan=1,
+                rowspan=1,
+                sticky=tk.E)
 
         # Boton para realizar de nuevo las simulaciones
         save = tk.Button(
-            data_frame,
+            self.data_frame,
             text='Save sims',
             command=self.save_routine)
         save.grid(column=0, row=6, columnspan=1, rowspan=2, sticky=tk.W)
 
-        # PyOrbital STD
-        text_std_pyorbital = tk.Label(data_frame, text='PyOrbital')
-        text_std_pyorbital.grid(
-            column=1,
-            row=6,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
-
-        self.text_std_pyorbital_alt = tk.DoubleVar()
-        self.text_std_pyorbital_alt.set('PyOrbital alt.')
-
-        std_pyorbital_alt = tk.Label(
-            data_frame,
-            textvariable=self.text_std_pyorbital_alt)
-        std_pyorbital_alt.grid(
-            column=2,
-            row=6,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
-
-        self.text_std_pyorbital_az = tk.DoubleVar()
-        self.text_std_pyorbital_az.set('PyOrbital az.')
-
-        std_pyorbital_az = tk.Label(
-            data_frame,
-            textvariable=self.text_std_pyorbital_az)
-        std_pyorbital_az.grid(
-            column=3,
-            row=6,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
-
-        # Orbitron STD
-        text_std_orbitron = tk.Label(data_frame, text='Orbitron')
-        text_std_orbitron.grid(
-            column=1,
-            row=7,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
-
-        self.text_std_orbitron_alt = tk.DoubleVar()
-        self.text_std_orbitron_alt.set('Orbitron alt.')
-
-        std_orbitron_alt = tk.Label(
-            data_frame,
-            textvariable=self.text_std_orbitron_alt)
-        std_orbitron_alt.grid(
-            column=2,
-            row=7,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
-
-        self.text_std_orbitron_az = tk.DoubleVar()
-        self.text_std_orbitron_az.set('Orbitron az.')
-
-        std_orbitron_az = tk.Label(
-            data_frame,
-            textvariable=self.text_std_orbitron_az)
-        std_orbitron_az.grid(
-            column=3,
-            row=7,
-            columnspan=1,
-            rowspan=1,
-            sticky=tk.E)
+    def _init_control_frame(self):
 
         # Control frame
         control_frame = tk.LabelFrame(
@@ -546,88 +447,22 @@ class MainGUI(object):
         if available_STK == 'yes':
             self.STK = self.STK + 1
 
-        figure = output_data.Read_data(self.pyephem, self.predict, self.pyorbital,
-                                       self.orbitron, self.object_name.name, self.STK, argv[3], argv[4])
-
-        # Available
-        actual_available = output_data.Check_data(
-            self.index,
-            self.object_name.name,
-            argv[3],
-            argv[4])
-        available_predict = actual_available.predict
-        available_pyephem = actual_available.pyephem
-        available_pyorbital = actual_available.pyorbital
-        available_orbitron = actual_available.orbitron
-        available_STK = actual_available.STK
-
-        object_name = get_elements.Get_name(self.index)
-
-        self.text.set_text(object_name.name)
+        self.cur_sat = get_name(self.index, self.data_folder)
+        self.text.set_text(self.cur_sat)
 
         # Check if data is available and print it
 
-        if available_pyephem == 'yes':
-            figure_pyephem = output_data.Read_pyephem_data(self.pyephem)
-            pyephem_time = figure_pyephem.pyephem_simulation_time
+        for program in self.progs:
+            if program.get('checker')(program.get("index"), self.cur_sat,
+                                      self.data_folder) == 'yes':
+                data = program.get('reader')(program.get('index'), self.cur_sat,
+                                             self.data_folder)
 
-            pyephem_alt = figure_pyephem.pyephem_alt_satellite
-            self.plot_pyephem_alt.set_ydata(pyephem_alt)
-            self.plot_pyephem_alt.set_xdata(pyephem_time)
+                program.get('plot_alt').set_xdata(data.get_sim_time())
+                program.get('plot_alt').set_ydata(data.get_alts())
 
-            pyephem_az = figure_pyephem.pyephem_az_satellite
-            self.plot_pyephem_az.set_ydata(pyephem_az)
-            self.plot_pyephem_az.set_xdata(pyephem_time)
-
-        if available_predict == 'yes':
-            figure_predict = output_data.Read_predict_data(self.predict)
-            predict_time = figure_predict.predict_simulation_time
-
-            predict_alt = figure_predict.predict_alt_satellite
-            self.plot_predict_alt.set_ydata(predict_alt)
-            self.plot_predict_alt.set_xdata(predict_time)
-
-            predict_az = figure_predict.predict_az_satellite
-            self.plot_predict_az.set_ydata(predict_az)
-            self.plot_predict_az.set_xdata(predict_time)
-
-        if available_pyorbital == 'yes':
-            figure_pyorbital = output_data.Read_pyorbital_data(self.pyorbital)
-            pyorbital_time = figure_pyorbital.pyorbital_simulation_time
-
-            pyorbital_alt = figure_pyorbital.pyorbital_alt_satellite
-            self.plot_pyorbital_alt.set_ydata(pyorbital_alt)
-            self.plot_pyorbital_alt.set_xdata(pyorbital_time)
-
-            pyorbital_az = figure_pyorbital.pyorbital_az_satellite
-            self.plot_pyorbital_az.set_ydata(pyorbital_az)
-            self.plot_pyorbital_az.set_xdata(pyorbital_time)
-
-        if available_orbitron == 'yes':
-            figure_orbitron = output_data.Read_orbitron_data(self.orbitron,
-                                                             self.object_name.name, argv[4])
-
-            orbitron_time = figure_orbitron.orbitron_time
-            orbitron_alt = figure_orbitron.orbitron_alt_satellite
-            self.plot_orbitron_alt.set_ydata(orbitron_alt)
-            self.plot_orbitron_alt.set_xdata(orbitron_time)
-
-            orbitron_az = figure_orbitron.orbitron_az_satellite
-            self.plot_orbitron_az.set_ydata(orbitron_az)
-            self.plot_orbitron_az.set_xdata(orbitron_time)
-
-        if available_STK == 'yes':
-            figure_STK = output_data.Read_STK_data(self.STK, argv[3])
-
-            STK_alt = figure_STK.STK_alt_satellite
-            STK_time = figure_STK.STK_simulation_time
-            self.plot_STK_alt.set_ydata(STK_alt)
-            self.plot_STK_alt.set_xdata(STK_time)
-
-            STK_az = figure_STK.STK_az_satellite
-            self.plot_STK_az.set_ydata(STK_az)
-            self.plot_STK_az.set_xdata(STK_time)
-
+                program.get('plot_az').set_xdata(data.get_sim_time())
+                program.get('plot_az').set_ydata(data.get_azs)
         self.f.canvas.draw()
 
         # Subplot c

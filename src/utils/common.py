@@ -75,5 +75,5 @@ def get_names(data_folder):
     return result
 
 
-def get_name(data_folder, index):
+def get_name(index, data_folder):
     return get_names(data_folder)[index]
