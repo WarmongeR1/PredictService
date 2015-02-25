@@ -20,6 +20,7 @@
 # Author: s.gongoragarcia[at]gmail.com
 ##########################################################################
 import sys
+from src.comparators.comparator import compare
 
 from src.gui import scrolledlist
 from src.utils import get_elements, output_data
@@ -36,7 +37,7 @@ from src.pyephem.datachecker import DataChecker as PyEphemChecker
 from src.pyorbital.datachecker import DataChecker as PyOrbitalChecker
 from src.orbitron.datachecker import DataChecker as OrbitronChecker
 from src.stk.datachecker import DataChecker as STKChecker
-
+from src.comparators.comparator import compare
 
 if sys.version < '3':
     from tkinter.filedialog import asksaveasfile
@@ -74,6 +75,8 @@ class MainGUI(object):
                 'plot_alt': None,
                 'plot_az': None,
                 'color': 'b',
+                'std_alt_value': None,
+                'std_az_value': None,
             },
             {
                 'name': 'predict',
@@ -81,6 +84,8 @@ class MainGUI(object):
                 'checker': PredictChecker,
                 'index': self.index_predict,
                 'color': 'r',
+                'std_alt_value': None,
+                'std_az_value': None,
             },
             {
                 'name': 'orbitron',
@@ -90,6 +95,8 @@ class MainGUI(object):
                 'plot_alt': None,
                 'plot_az': None,
                 'color': 'y',
+                'std_alt_value': None,
+                'std_az_value': None,
             },
             {
                 'name': 'pyorbital',
@@ -99,6 +106,8 @@ class MainGUI(object):
                 'plot_alt': None,
                 'plot_az': None,
                 'color': 'm',
+                'std_alt_value': None,
+                'std_az_value': None,
             },
             {
                 'name': 'STK',
@@ -108,6 +117,8 @@ class MainGUI(object):
                 'plot_alt': None,
                 'plot_az': None,
                 'color': 'g',
+                'std_alt_value': None,
+                'std_az_value': None,
 
             }
         ]
@@ -163,7 +174,7 @@ class MainGUI(object):
     def _init_data(self):
 
         for program in self.progs:
-            if program.get('checker')(program.get("index"), self.cur_sat,
+            if program.get('checker')(program.get('index'), self.cur_sat,
                                       self.data_folder) == 'yes':
                 data = program.get('reader')(self.data_folder,
                                              program.get('index'))
@@ -453,7 +464,7 @@ class MainGUI(object):
         # Check if data is available and print it
 
         for program in self.progs:
-            if program.get('checker')(program.get("index"), self.cur_sat,
+            if program.get('checker')(program.get('index'), self.cur_sat,
                                       self.data_folder) == 'yes':
                 data = program.get('reader')(program.get('index'), self.cur_sat,
                                              self.data_folder)
@@ -851,32 +862,16 @@ class MainGUI(object):
         # save in pdf file
 
     def std_simulations(self):
-
-        # predict
-        data = Read_data(self.pyephem, self.predict, self.pyorbital,
-                         self.orbitron, self.object_name.name, self.STK, argv[3], argv[4])
-        (std_predict_alt, std_predict_az) = data.STK_vs_predict()
-
-        self.text_std_predict_alt.set(round(float(std_predict_alt), 7))
-        self.text_std_predict_az.set(round(float(std_predict_az), 7))
-
-        # pyephem
-        (std_pyephem_alt, std_pyephem_az) = data.STK_vs_PyEphem()
-
-        self.text_std_pyephem_alt.set(round(float(std_pyephem_alt), 7))
-        self.text_std_pyephem_az.set(round(float(std_pyephem_az), 7))
-
-        # pyorbital
-        (std_pyorbital_alt, std_pyorbital_az) = data.STK_vs_PyOrbital()
-
-        self.text_std_pyorbital_alt.set(round(float(std_pyorbital_alt), 7))
-        self.text_std_pyorbital_az.set(round(float(std_pyorbital_az), 7))
-
-        # orbitron
-        (std_orbitron_alt, std_orbitron_az) = data.STK_vs_Orbitron()
-
-        self.text_std_orbitron_alt.set(round(float(std_orbitron_alt), 7))
-        self.text_std_orbitron_az.set(round(float(std_orbitron_az), 7))
+        for program in self.progs:
+            if program.get('name') != 'STK':
+                std_predict_alt, std_predict_az = compare(
+                    program.get('name'), self.index_stk, program.get('index'),
+                    self.data_folder
+                )
+                program.get('std_alt_value').set(
+                    round(float(std_predict_alt), 7))
+                program.get('std_az_value').set(
+                    round(float(std_predict_alt), 7))
 
     def _quit(self):
         root.quit()     # stops mainloop
