@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from datetime import datetime
+import datetime
 import os
 
 from src.base.datareader import BaseDataReader
@@ -7,6 +7,7 @@ from src.utils.common import local_to_unix
 
 
 class DataReader(BaseDataReader):
+
     def __init__(self, data_folder, sat_selected):
         super().__init__(data_folder, sat_selected)
 

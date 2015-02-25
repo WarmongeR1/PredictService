@@ -36,5 +36,3 @@ class DataReader(BaseDataReader):
                 self.simulation_time.append(int(line[0]))
                 self.alt_satellite.append(float(line[1]))
                 self.az_satellite.append(float(line[2]))
-
-

@@ -6,6 +6,7 @@ from src.stk.datareader import DataReader as FirstReader
 
 
 class Comparator(BaseComparator):
+
     def __init__(self, data_folder_first, data_folder_second, index_first,
                  index_second):
         super().__init__(data_folder_first, data_folder_second, index_first,
