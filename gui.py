@@ -30,7 +30,7 @@ def main():
 
     if options.tle_file is None or options.data_folder:
         root = tk.Tk()
-        interfaz = MainGUI(root, options.tle_file, options.data_folder)
+        interfaz = MainGUI(root, options.tle_file, options.data_folder, )
         root.title('Simulaciones')
         root.geometry('1010x620')
         root.resizable(0, 0)

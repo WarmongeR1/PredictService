@@ -32,7 +32,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
 
 class MainGUI(object):
 
-    def __init__(self, view, tle_file, data_folder):
+    def __init__(self, view, tle_file, data_folder, base_checker_type):
         self.index = 0
         self.cur_sat = ''
         self.index_pyephem = 0
@@ -102,11 +102,27 @@ class MainGUI(object):
 
             }
         ]
+        self.base_checker_type = base_checker_type
 
         self.length = get_cnt_satellites(self.data_folder) - 1
 
         # self.widgets()
         self._init_view()
+
+    def get_base_checker(self, sat_name=None):
+        program = self.get_prog_info(self.base_checker_type)
+        base_checker = program.get(
+            'checker')
+        if sat_name is None:
+            sat_name = self.cur_sat
+        return base_checker(program.get('index'), sat_name, self.data_folder)
+
+    def get_prog_info(self, name):
+        result = None
+        for program in self.progs:
+            if program.get('name') == name:
+                result = program
+        return result
 
     def _init_view(self):
         self._init_plot()
@@ -155,7 +171,7 @@ class MainGUI(object):
 
         for program in self.progs:
             if program.get('checker')(program.get('index'), self.cur_sat,
-                                      self.data_folder) == 'yes':
+                                      self.data_folder):
                 data = program.get('reader')(self.data_folder,
                                              program.get('index'))
                 alt_plot, = self.plot_altitude.plot(
@@ -283,6 +299,8 @@ class MainGUI(object):
             rowspan=3,
             sticky=tk.W)
 
+        self.sims_available()
+
         # STD
         label_std = tk.Label(self.data_frame, text='Standard desviation')
         label_std.grid(column=2, row=2, columnspan=1, rowspan=1, sticky=tk.W)
@@ -404,7 +422,7 @@ class MainGUI(object):
         self.cur_sat = get_name(self.index, self.data_folder)
         for program in self.progs:
             if program.get('checker')(program.get('index'), self.cur_sat,
-                                      self.data_folder) == 'yes':
+                                      self.data_folder):
                 program['index'] = program.get('index') + 1
 
         self.cur_sat = get_name(self.index, self.data_folder)
@@ -414,7 +432,7 @@ class MainGUI(object):
 
         for program in self.progs:
             if program.get('checker')(program.get('index'), self.cur_sat,
-                                      self.data_folder) == 'yes':
+                                      self.data_folder):
                 data = program.get('reader')(program.get('index'), self.cur_sat,
                                              self.data_folder)
 
@@ -467,30 +485,28 @@ class MainGUI(object):
         self._step_action()
         self._redraw()
 
-    def sims_availables(self):
-
-        base_comp = STKChecker(self.index_stk, self.cur_sat,
-                               self.data_folder)
-
+    def sims_available(self):
+        base_comp = self.get_base_checker().check()
         list_of_simulations = []
 
         if base_comp:
             for program in self.progs:
-                if program.get('name') != 'STK':
+                if program.get('name') != self.base_checker_type:
                     list_of_simulations.append(
-                        'STK vs. %s Alt.' % program.get('name'))
+                        'Altitude %s' %
+                        program.get('name'))
                     list_of_simulations.append(
-                        'STK vs. %s Azi.' % program.get('name'))
+                        'Azimuth %s' %
+                        program.get('name'))
         else:
-            list_of_simulations.append('STK not available')
+            list_of_simulations = []
         self.list_of_simulations = list_of_simulations
 
     def pick_simulation(self, index):
         for program in self.progs:
-            if self.list_of_simulations[index][
-               8:12] == program.get('name')[:4]:
-                flag_alt = self.list_of_simulations[index][16:19] == 'Alt'
-                flag_az = self.list_of_simulations[index][16:19] == 'Azi'
+            if program.get('name') in self.list_of_simulations[index]:
+                flag_alt = 'Altitude' in self.list_of_simulations[index]
+                flag_az = 'Azimuth' in self.list_of_simulations[index]
 
                 if flag_alt or flag_az:
                     time, list_alt, list_az = compare(program.get('name'),
@@ -514,31 +530,23 @@ class MainGUI(object):
                     self.plot_comparation.canvas.draw()
 
     def save_routine(self):
-
         f = asksaveasfile(mode='w', defaultextension='.txt')
-        # asksaveasfile return `None` if dialog closed with "cancel".
         if f is None:
             return
-
         text = self.save_data()
-
         f.writelines(('%s\n' % line for line in text))
         f.close()
 
     def save_data(self):
-
         tkinter.messagebox.showinfo(
             'Wait until simulations end.',
             'This could take a while.')
-
         index = 0
-
         text = ['==================================',
                 ' Family %s' % self.tle_file,
                 '==================================']
 
-        base_comp = STKChecker(self.index_stk, self.cur_sat,
-                               self.data_folder)
+        base_comp = self.get_base_checker().check()
 
         for i in range(self.length):
 
@@ -546,9 +554,9 @@ class MainGUI(object):
 
             text.append(' Satellite: %s' % sat_name)
 
-            if base_comp == 'yes':
+            if base_comp:
                 for program in self.progs:
-                    if program.get('name') != 'STK':
+                    if program.get('name') != self.base_checker_type:
                         std_predict_alt, std_predict_az = compare(
                             self.index_stk, program.get('index'),
                             self.data_folder, False)
@@ -560,11 +568,8 @@ class MainGUI(object):
                         text.append(
                             ' Alt: %s Az: %s' %
                             (std_predict_alt, std_predict_az))
-
-            elif base_comp == 'no':
-                print("Data don't available %s" % i)
             else:
-                pass
+                print("Data don't available %s" % i)
             index += 1
             text.append('')
 
@@ -572,7 +577,7 @@ class MainGUI(object):
 
     def std_simulations(self):
         for program in self.progs:
-            if program.get('name') != 'STK':
+            if program.get('name') != self.base_checker_type:
                 std_predict_alt, std_predict_az = compare(
                     program.get('name'), self.index_stk, program.get('index'),
                     self.data_folder

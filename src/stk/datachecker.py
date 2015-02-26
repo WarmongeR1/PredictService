@@ -15,6 +15,7 @@ class DataChecker(BaseDataChecker):
         from os import listdir
 
         if index < len(listdir(self.data_folder)):
-            self.result = 'yes'
+            self.result = True
         else:
-            self.result = 'no'
+            self.result = False
+        return self.get()

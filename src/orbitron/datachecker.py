@@ -36,10 +36,11 @@ class DataChecker(BaseDataChecker):
                 sats_name.append(sat_name)
 
             if sat_name in sats_name:
-                self.result = 'yes'
+                self.result = True
             else:
-                self.result = 'no'
+                self.result = False
 
         # File not available
         except IOError:
-            self.result = 'no'
+            self.result = False
+        return self.get()

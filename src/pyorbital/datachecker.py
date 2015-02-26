@@ -18,6 +18,7 @@ class DataChecker(BaseDataChecker):
         files = listdir(self.data_folder)
 
         if sat_name in files:
-            self.result = 'yes'
+            self.result = True
         else:
-            self.result = 'no'
+            self.result = False
+        return self.get()
