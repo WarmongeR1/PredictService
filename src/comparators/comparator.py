@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-from src.comparators.stk.stk_pyephem import Comparator as PyEphem
-from src.comparators.stk.stk_pyorbital import Comparator as PyOrbital
-from src.comparators.stk.stk_orbitron import Comparator as Orbitron
-from src.comparators.stk.stk_predict import Comparator as Predict
+from src.comparators.stk.pyephem import Comparator as PyEphem
+from src.comparators.stk.pyorbital import Comparator as PyOrbital
+from src.comparators.stk.orbitron import Comparator as Orbitron
+from src.comparators.stk.predict import Comparator as Predict
 
 
 def compare(direct, index_first, index_second, folder, deviation=True):
