@@ -6,6 +6,7 @@ from src.base.comparator import BaseComparator
 from src.pyephem.datareader import DataReader as FirstReader
 from src.orbitron.datareader import DataReader as SecondReader
 
+
 class Comparator(BaseComparator):
 
     def __init__(self, data_folder, index_first,
