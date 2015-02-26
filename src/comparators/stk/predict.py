@@ -10,9 +10,5 @@ class Comparator(BaseComparator):
 
     def __init__(self, data_folder, index_first,
                  index_second):
-        name_first = 'stk'
-        name_second = 'predict'
-        data_folder_first = os.path.join(data_folder, name_first)
-        data_folder_second = os.path.join(data_folder, name_second)
-        super().__init__(data_folder_first, data_folder_second, index_first,
+        super().__init__(data_folder, index_first,
                          index_second, FirstReader, SecondReader)

@@ -4,10 +4,10 @@ import numpy
 
 class BaseComparator(object):
 
-    def __init__(self, data_folder_first, data_folder_second, index_first,
+    def __init__(self, data_folder, index_first,
                  index_second, first_reader, second_reader):
-        self.data_folder_first = data_folder_first
-        self.data_folder_second = data_folder_second
+        self.data_folder_first = data_folder
+        self.data_folder_second = data_folder
         self.index_first = index_first
         self.index_second = index_second
 
@@ -23,11 +23,11 @@ class BaseComparator(object):
 
     def _prepare(self, first=True):
         if first:
-            reader = self.first_reader(self.index_first,
-                                       self.data_folder_first)
+            reader = self.first_reader(self.data_folder_first,
+                                       self.index_first)
         else:
-            reader = self.second_reader(self.index_second,
-                                        self.data_folder_second)
+            reader = self.second_reader(self.data_folder_second,
+                                        self.index_second)
 
         times = [int(item) for item in reader.get_sim_time()]
         alts = [float(item) for item in reader.get_alts()]
@@ -52,7 +52,8 @@ class BaseComparator(object):
 
         time_intersected = list(
             set(self.first_times).intersection(self.second_times))
-
+        # todo
+        # времена расчетов не совпадают
         for i in range(len(time_intersected)):
             difference_alt = \
                 float(self.second_alts[

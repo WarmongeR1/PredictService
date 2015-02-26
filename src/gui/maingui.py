@@ -163,23 +163,21 @@ class MainGUI(object):
         toolbar.update()
         self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=0)
 
-    def _init_data(self):
+    def _check_program(self, program):
+        return program.get('checker')(program.get('index'), self.cur_sat,
+                                      self.data_folder).get()
 
+    def _init_data(self):
         for program in self.progs:
-            if program.get('checker')(program.get('index'), self.cur_sat,
-                                      self.data_folder).get():
+            if self._check_program(program):
                 data = program.get('reader')(self.data_folder,
                                              program.get('index'))
-                alt_plot, = self.plot_altitude.plot(
+                program['plot_alt'] = self.plot_altitude.plot(
                     data.get_sim_time(), data.get_alts(), program.get('color'),
-                    label=program.get('name'))
-
-                az_plot, = self.plot_azimuth.plot(
+                    label=program.get('name'))[0]
+                program['plot_az'] = self.plot_azimuth.plot(
                     data.get_sim_time(), data.get_azs(), program.get('color'),
-                    label=program.get('name'))
-
-                program['plot_alt'] = alt_plot
-                program['plot_az'] = az_plot
+                    label=program.get('name'))[0]
 
     def _init_comparation_plot(self):
 
@@ -409,21 +407,17 @@ class MainGUI(object):
     def _step_action(self, is_next=True):
         self.cur_sat = get_name(self.index, self.data_folder)
         for program in self.progs:
-            if program.get('checker')(program.get('index'), self.cur_sat,
-                                      self.data_folder).get():
+            if self._check_program(program):
                 if is_next:
                     program['index'] = program.get('index') + 1
                 else:
                     program['index'] = program.get('index') - 1
 
-        self.cur_sat = get_name(self.index, self.data_folder)
         self.text.set_text(self.cur_sat)
-
         # Check if data is available and print it
 
         for program in self.progs:
-            if program.get('checker')(program.get('index'), self.cur_sat,
-                                      self.data_folder).get():
+            if self._check_program(program):
                 data = program.get('reader')(self.data_folder,
                                              program.get('index'),
                                              self.cur_sat)
@@ -433,12 +427,9 @@ class MainGUI(object):
 
                 program.get('plot_az').set_xdata(data.get_sim_time())
                 program.get('plot_az').set_ydata(data.get_azs())
-                break
-        self._redraw()
 
     def _redraw(self):
         self.f.canvas.draw()
-
         # Subplot c
         self.c.clear()
 
@@ -552,14 +543,15 @@ class MainGUI(object):
         base_index = self.get_program_info(self.base_checker_type).get('index')
         for program in self.progs:
             if program.get('name') != self.base_checker_type:
-                std_predict_alt, std_predict_az = compare(
-                    program.get('name'), base_index, program.get('index'),
-                    self.data_folder
-                )
-                program.get('std_alt_value').set(
-                    round(float(std_predict_alt), 7))
-                program.get('std_az_value').set(
-                    round(float(std_predict_alt), 7))
+                if self._check_program(program):
+                    std_predict_alt, std_predict_az = compare(
+                        program.get('name'), base_index, program.get('index'),
+                        self.data_folder
+                    )
+                    program.get('std_alt_value').set(
+                        round(float(std_predict_alt), 7))
+                    program.get('std_az_value').set(
+                        round(float(std_predict_alt), 7))
 
     def action_quit(self):
         self.view.quit()
