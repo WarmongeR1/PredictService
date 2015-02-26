@@ -6,7 +6,7 @@ from src.comparators.stk.stk_orbitron import Comparator as Orbitron
 from src.comparators.stk.stk_predict import Comparator as Predict
 
 
-def compare(direct, index_first, index_second, folder):
+def compare(direct, index_first, index_second, folder, deviation=True):
     comparators = {
         'predict': Predict,
         'pyephem': PyEphem,
@@ -15,4 +15,8 @@ def compare(direct, index_first, index_second, folder):
     }
 
     compar = comparators.get(direct)(index_first, index_second, folder)
-    return compar.compare_deviation()
+    if deviation:
+        result = compar.compare_deviation()
+    else:
+        result = compar.compare()
+    return result

@@ -34,6 +34,7 @@ from src.pyorbital.datachecker import DataChecker as PyOrbitalChecker
 from src.orbitron.datachecker import DataChecker as OrbitronChecker
 from src.stk.datachecker import DataChecker as STKChecker
 from src.comparators.comparator import compare
+from src.utils.tlereader import TLEReader
 
 if sys.version < '3':
     from tkinter.filedialog import asksaveasfile
@@ -46,12 +47,11 @@ else:
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
     NavigationToolbar2TkAgg
-from sys import argv
 
 
 class MainGUI(object):
 
-    def __init__(self):
+    def __init__(self, tle_file):
         self.index = 0
         self.cur_sat = ''
         self.index_pyephem = 0
@@ -60,6 +60,8 @@ class MainGUI(object):
         self.index_stk = 0
         self.index_orbitron = 0
         self.data_folder = ''
+
+        self.tle_file = tle_file
 
         self.progs = [
             {
@@ -245,12 +247,13 @@ class MainGUI(object):
         name.grid(column=1, row=0, columnspan=1, rowspan=1, sticky=tk.E)
 
         # Inclination
-        elements = get_elements.Get_elements(argv[1], self.index)
+        reader = TLEReader()
+        reader.calc_params(self.tle_file, self.index)
         label_incl = tk.Label(self.data_frame, text='Inclination')
         label_incl.grid(column=2, row=0, columnspan=1, rowspan=1, sticky=tk.W)
 
         self.text_incl = tk.DoubleVar()
-        self.text_incl.set(elements.inclination)
+        self.text_incl.set(reader.get_inclination())
 
         incl = tk.Label(self.data_frame, textvariable=self.text_incl)
         incl.grid(column=3, row=0, columnspan=1, rowspan=1, sticky=tk.E)
@@ -260,7 +263,7 @@ class MainGUI(object):
         file_name.grid(column=0, row=1, columnspan=1, rowspan=1, sticky=tk.W)
 
         self.file_name = tk.StringVar()
-        self.file_name.set(argv[1])
+        self.file_name.set(self.tle_file)
 
         file_ = tk.Label(self.data_frame, textvariable=self.file_name)
         file_.grid(column=1, row=1, columnspan=1, rowspan=1, sticky=tk.E)
@@ -275,7 +278,7 @@ class MainGUI(object):
             sticky=tk.W)
 
         self.text_motion = tk.DoubleVar()
-        self.text_motion.set(elements.mean_motion)
+        self.text_motion.set(reader.get_mean_motion())
 
         motion = tk.Label(self.data_frame, textvariable=self.text_motion)
         motion.grid(column=3, row=1, columnspan=1, rowspan=1, sticky=tk.E)
@@ -296,17 +299,6 @@ class MainGUI(object):
             columnspan=1,
             rowspan=3,
             sticky=tk.W)
-
-        # Generate list of simulations
-        self.sims_availables(
-            available_predict,
-            available_pyephem,
-            available_pyorbital,
-            available_orbitron,
-            available_STK)
-
-        for i in range(len(self.list_of_simulations)):
-            sims_availables.append(self.list_of_simulations[i])
 
         # STD
         label_std = tk.Label(self.data_frame, text='Standard desviation')
@@ -425,7 +417,6 @@ class MainGUI(object):
             self.forward.configure(state=tk.NORMAL)
             self.next.configure(state=tk.NORMAL)
 
-
     def _step_action(self):
         self.cur_sat = get_name(self.index, self.data_folder)
         for program in self.progs:
@@ -516,114 +507,32 @@ class MainGUI(object):
         self.list_of_simulations = list_of_simulations
 
     def pick_simulation(self, index):
+        for program in self.progs:
+            if self.list_of_simulations[index][
+                    8:12] == program.get('name')[:4]:
+                flag_alt = self.list_of_simulations[index][16:19] == 'Alt'
+                flag_az = self.list_of_simulations[index][16:19] == 'Azi'
 
-        comparation = Read_data(self.pyephem, self.predict, self.pyorbital,
-                                self.orbitron, self.object_name.name, self.STK,
-                                argv[3], argv[4])
+                if flag_alt or flag_az:
+                    time, list_alt, list_az = compare(program.get('name'),
+                                                      self.index_stk,
+                                                      program.get('index'),
+                                                      self.data_folder)
+                    self.c.clear()
 
-        if self.list_of_simulations[index][8:12] == 'pred' and\
-                self.list_of_simulations[index][16:19] == 'Alt':
-            (time, list_alt, list_az) = comparation.STK_vs_predict_comp()
+                    if flag_alt:
+                        self.c.plot(time, list_alt,
+                                    '%ss' % program.get('color'),
+                                    label='Difference')
+                    elif flag_az:
+                        self.c.plot(time, list_az,
+                                    '%ss' % program.get('color'),
+                                    label='Difference')
+                    self.c.legend(loc=2, borderaxespad=0., prop={'size': 12})
+                    self.c.set_ylabel('Altitude - Degrees')
+                    self.c.grid(True)
 
-            self.c.clear()
-
-            self.c.plot(time, list_alt, 'ys', label='Difference')
-            self.c.legend(loc=2, borderaxespad=0., prop={'size': 12})
-            self.c.set_ylabel('Altitude - Degrees')
-            self.c.grid(True)
-
-            self.plot_comparation.canvas.draw()
-
-        elif self.list_of_simulations[index][8:12] == 'pred' and\
-                self.list_of_simulations[index][16:19] == 'Azi':
-            (time, list_alt, list_az) = comparation.STK_vs_predict_comp()
-
-            self.c.clear()
-
-            self.c.plot(time, list_az, 'ys', label='Difference')
-            self.c.legend(loc=2, borderaxespad=0., prop={'size': 12})
-            self.c.set_ylabel('Azimuth - Degrees')
-            self.c.grid(True)
-
-            self.plot_comparation.canvas.draw()
-
-        elif self.list_of_simulations[index][8:12] == 'PyEp' and\
-                self.list_of_simulations[index][16:19] == 'Alt':
-            (time, list_alt, list_az) = comparation.STK_vs_PyEphem_comp()
-
-            self.c.clear()
-
-            self.c.plot(time, list_alt, 'rs', label='Difference')
-            self.c.legend(loc=2, borderaxespad=0., prop={'size': 12})
-            self.c.set_ylabel('Altitude - Degrees')
-            self.c.grid(True)
-
-            self.plot_comparation.canvas.draw()
-
-        elif self.list_of_simulations[index][8:12] == 'PyEp' and\
-                self.list_of_simulations[index][16:19] == 'Azi':
-            (time, list_alt, list_az) = comparation.STK_vs_PyEphem_comp()
-
-            self.c.clear()
-
-            self.c.plot(time, list_az, 'rs', label='Difference')
-            self.c.legend(loc=2, borderaxespad=0., prop={'size': 12})
-            self.c.set_ylabel('Azimuth - Degrees')
-            self.c.grid(True)
-
-            self.plot_comparation.canvas.draw()
-
-        elif self.list_of_simulations[index][8:12] == 'PyOr' and\
-                self.list_of_simulations[index][18:21] == 'Alt':
-            (time, list_alt, list_az) = comparation.STK_vs_PyOrbital_comp()
-
-            self.c.clear()
-
-            self.c.plot(time, list_az, 'bs', label='Difference')
-            self.c.legend(loc=2, borderaxespad=0., prop={'size': 12})
-            self.c.set_ylabel('Altitude - Degrees')
-            self.c.grid(True)
-
-            self.plot_comparation.canvas.draw()
-
-        elif self.list_of_simulations[index][8:12] == 'PyOr' and\
-                self.list_of_simulations[index][18:21] == 'Azi':
-            (time, list_alt, list_az) = comparation.STK_vs_PyOrbital_comp()
-
-            self.c.clear()
-
-            self.c.plot(time, list_az, 'bs', label='Difference')
-            self.c.legend(loc=2, borderaxespad=0., prop={'size': 12})
-            self.c.set_ylabel('Azimuth - Degrees')
-            self.c.grid(True)
-
-            self.plot_comparation.canvas.draw()
-
-        elif self.list_of_simulations[index][8:12] == 'Orbi' and\
-                self.list_of_simulations[index][17:20] == 'Alt':
-            (time, list_alt, list_az) = comparation.STK_vs_Orbitron_comp()
-
-            self.c.clear()
-
-            self.c.plot(time, list_alt, 'gs', label='Difference')
-            self.c.legend(loc=2, borderaxespad=0., prop={'size': 12})
-            self.c.set_ylabel('Altitude - Degrees')
-            self.c.grid(True)
-
-            self.plot_comparation.canvas.draw()
-
-        elif self.list_of_simulations[index][8:12] == 'Orbi' and\
-                self.list_of_simulations[index][17:20] == 'Azi':
-            (time, list_alt, list_az) = comparation.STK_vs_Orbitron_comp()
-
-            self.c.clear()
-
-            self.c.plot(time, list_az, 'gs', label='Difference')
-            self.c.legend(loc=2, borderaxespad=0., prop={'size': 12})
-            self.c.set_ylabel('Azimuth - Degrees')
-            self.c.grid(True)
-
-            self.plot_comparation.canvas.draw()
+                    self.plot_comparation.canvas.draw()
 
     def save_routine(self):
 
@@ -644,97 +553,40 @@ class MainGUI(object):
             'This could take a while.')
 
         index = 0
-        i = 0
 
-        text = []
-        text.append('==================================')
-        text.append(' Family %s' % (argv[1]))
-        text.append('==================================')
+        text = ['==================================',
+                ' Family %s' % self.tle_file,
+                '==================================']
+
+        base_comp = STKChecker(self.index_stk, self.cur_sat,
+                               self.data_folder)
 
         for i in range(self.length):
 
-            object_name = get_name(i, self.data_folder)
+            sat_name = get_name(i, self.data_folder)
 
-            text.append(' Satellite: %s' % (object_name.name))
+            text.append(' Satellite: %s' % (sat_name))
 
-            actual_available = Check_data(
-                index,
-                object_name.name,
-                argv[3],
-                argv[4])
-            available_STK = actual_available.STK
+            if base_comp == 'yes':
+                for program in self.progs:
+                    if program.get('name') != 'STK':
+                        std_predict_alt, std_predict_az = compare(
+                            self.index_stk, program.get('index'),
+                            self.data_folder, False)
 
-            if available_STK == 'yes':
+                        std_predict_alt = round(float(std_predict_alt), 7)
+                        std_predict_az = round(float(std_predict_az), 7)
 
-                available_predict = actual_available.predict
-                available_pyephem = actual_available.pyephem
-                available_pyorbital = actual_available.pyorbital
-                available_orbitron = actual_available.orbitron
+                        text.append(' %s data' % program.get('name'))
+                        text.append(
+                            ' Alt: %s Az: %s' %
+                            (std_predict_alt, std_predict_az))
 
-                data = Read_data(index, index, index,
-                                 index, self.object_name.name, index, argv[3], argv[4])
-
-                if available_predict == 'yes':
-
-                    (std_predict_alt, std_predict_az) = data.STK_vs_predict()
-
-                    std_predict_alt = round(float(std_predict_alt), 7)
-                    std_predict_az = round(float(std_predict_az), 7)
-
-                    text.append(' predict data')
-                    text.append(
-                        ' Alt: %s Az: %s' %
-                        (std_predict_alt, std_predict_az))
-
-                if available_pyephem == 'yes':
-
-                    (std_pyephem_alt, std_pyephem_az) = data.STK_vs_PyEphem()
-
-                    std_pyephem_alt = round(float(std_pyephem_alt), 7)
-                    std_pyephem_az = round(float(std_pyephem_az), 7)
-
-                    text.append(' PyEphem data')
-                    text.append(
-                        ' Alt: %s Az: %s' %
-                        (std_pyephem_alt, std_pyephem_az))
-
-                if available_pyorbital == 'yes':
-
-                    (std_pyorbital_alt,
-                     std_pyorbital_az) = data.STK_vs_PyOrbital()
-
-                    std_pyorbital_alt = round(float(std_pyorbital_alt), 7)
-                    round(float(std_pyorbital_az), 7)
-
-                    text.append(' PyOrbital data')
-                    text.append(
-                        ' Alt: %s Az: %s' %
-                        (std_pyorbital_alt, std_pyorbital_az))
-
-                if available_orbitron == 'yes':
-
-                    (std_orbitron_alt,
-                     std_orbitron_az) = data.STK_vs_Orbitron()
-
-                    std_orbitron_alt = round(float(std_orbitron_alt), 7)
-                    std_orbitron_az = round(float(std_orbitron_az), 7)
-
-                    text.append(' Orbitron data')
-                    text.append(
-                        ' Alt: %s Az: %s' %
-                        (std_orbitron_alt, std_orbitron_az))
-
-            elif available_STK == 'no':
-
-                print(("Data don't available %s" % (i)))
-
+            elif base_comp == 'no':
+                print("Data don't available %s" % i)
             else:
-
                 pass
-                # pass
-
-            i = i + 1
-            index = index + 1
+            index += 1
             text.append('')
 
         return text

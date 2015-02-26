@@ -67,6 +67,10 @@ class TLEReader(object):
     def devuelve_lista(self, x):
         return 3 * x
 
+    def calc_params(self, filepath, index):
+        self.read(filepath)
+        self.solve_coordinates(index)
+
     def pyephem_routine(self, name, line1, line2):
 
         satellite = ephem.readtle(name, line1, line2)
@@ -101,3 +105,12 @@ class TLEReader(object):
             self.pyephem_routine(self.show_satellite_list[i],
                                  self.tle_first_line_list[i],
                                  self.tle_second_line_list[i])
+
+    def get_epoch(self):
+        return self.epoch
+
+    def get_mean_motion(self):
+        return self.mean_motion
+
+    def get_inclination(self):
+        return self.inclination
