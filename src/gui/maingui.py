@@ -1,24 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-##########################################################################
-# Copyright 2014 Samuel Gongora Garcia (s.gongoragarcia@gmail.com)
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##########################################################################
-# Author: s.gongoragarcia[at]gmail.com
-##########################################################################
 import sys
 
 from src.gui import scrolledlist
@@ -51,7 +32,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
 
 class MainGUI(object):
 
-    def __init__(self, tle_file):
+    def __init__(self, view, tle_file, data_folder):
         self.index = 0
         self.cur_sat = ''
         self.index_pyephem = 0
@@ -59,10 +40,11 @@ class MainGUI(object):
         self.index_pyorbital = 0
         self.index_stk = 0
         self.index_orbitron = 0
-        self.data_folder = ''
+        self.data_folder = data_folder
         self.list_of_simulations = []
 
         self.tle_file = tle_file
+        self.view = view
 
         self.progs = [
             {
@@ -157,7 +139,7 @@ class MainGUI(object):
         self.plot_azimuth.grid(True)
 
     def _init_canvas(self):
-        left_frame = tk.Frame(root, height=800, width=500, padx=5, pady=5)
+        left_frame = tk.Frame(self.view, height=800, width=500, padx=5, pady=5)
         left_frame.grid(column=0, row=0, columnspan=1, rowspan=3)
 
         # Figure controls
@@ -196,7 +178,7 @@ class MainGUI(object):
         # Subplot c
         self.c = self.plot_comparation.add_subplot(111)
 
-        right_frame = tk.Frame(root, height=330, width=500, bd=0)
+        right_frame = tk.Frame(self.view, height=330, width=500, bd=0)
         right_frame.grid(
             column=1,
             row=0,
@@ -213,7 +195,7 @@ class MainGUI(object):
 
     def _init_data_frame(self):
         self.data_frame = tk.LabelFrame(
-            root,
+            self.view,
             text='Data',
             height=215,
             width=500,
@@ -376,7 +358,7 @@ class MainGUI(object):
 
         # Control frame
         control_frame = tk.LabelFrame(
-            root,
+            self.view,
             text='Controls',
             height=55,
             width=500,
@@ -562,7 +544,7 @@ class MainGUI(object):
 
             sat_name = get_name(i, self.data_folder)
 
-            text.append(' Satellite: %s' % (sat_name))
+            text.append(' Satellite: %s' % sat_name)
 
             if base_comp == 'yes':
                 for program in self.progs:
@@ -601,17 +583,34 @@ class MainGUI(object):
                     round(float(std_predict_alt), 7))
 
     def _quit(self):
-        root.quit()
-
+        self.view.quit()
 
 def main():
-    pass
+    from optparse import OptionParser
+
+    parser = OptionParser(usage="%prog: [options] [file]")
+    parser.add_option('-v', '--verbose', action='store_true')
+    parser.add_option(
+        '-i', '--tle_file', default=None,
+        help="Filepath to file with satellites TLE")
+    parser.add_option(
+        '-f', '--data_folder', default=None,
+        help="Path to folder with data")
+
+    (options, args) = parser.parse_args()
+
+    if not (len(args) == 1 or options.url):
+        parser.print_help()
+        sys.exit(1)
+
+    if options.tle_file is None or options.data_folder:
+        root = tk.Tk()
+        interfaz = MainGUI(root, options.tle_file, options.data_folder)
+        root.title('Simulaciones')
+        root.geometry('1010x620')
+        root.resizable(0, 0)
+        root.mainloop()
+
 
 if __name__ == '__main__':
     main()
-    root = tk.Tk()
-    interfaz = MainGUI()
-    root.title('Simulaciones')
-    root.geometry('1010x620')
-    root.resizable(0, 0)
-    root.mainloop()
