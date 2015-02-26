@@ -60,6 +60,7 @@ class MainGUI(object):
         self.index_stk = 0
         self.index_orbitron = 0
         self.data_folder = ''
+        self.list_of_simulations = []
 
         self.tle_file = tle_file
 
@@ -484,26 +485,22 @@ class MainGUI(object):
         self._step_action()
         self._redraw()
 
-    def sims_availables(self, available_predict, available_pyephem,
-                        available_pyorbital, available_orbitron, available_STK):
+    def sims_availables(self):
+
+        base_comp = STKChecker(self.index_stk, self.cur_sat,
+                               self.data_folder)
 
         list_of_simulations = []
-        if available_STK == 'yes':
-            if available_predict == 'yes':
-                list_of_simulations.append('STK vs. predict Alt.')
-                list_of_simulations.append('STK vs. predict Azi.')
-            if available_pyephem == 'yes':
-                list_of_simulations.append('STK vs. PyEphem Alt.')
-                list_of_simulations.append('STK vs. PyEphem Azi.')
-            if available_pyorbital == 'yes':
-                list_of_simulations.append('STK vs. PyOrbital Alt.')
-                list_of_simulations.append('STK vs. PyOrbital Azi.')
-            if available_orbitron == 'yes':
-                list_of_simulations.append('STK vs. Orbitron Alt.')
-                list_of_simulations.append('STK vs. Orbitron Azi.')
+
+        if base_comp:
+            for program in self.progs:
+                if program.get('name') != 'STK':
+                    list_of_simulations.append(
+                        'STK vs. %s Alt.' % program.get('name'))
+                    list_of_simulations.append(
+                        'STK vs. %s Azi.' % program.get('name'))
         else:
             list_of_simulations.append('STK not available')
-
         self.list_of_simulations = list_of_simulations
 
     def pick_simulation(self, index):
@@ -591,8 +588,6 @@ class MainGUI(object):
 
         return text
 
-        # save in pdf file
-
     def std_simulations(self):
         for program in self.progs:
             if program.get('name') != 'STK':
@@ -606,10 +601,14 @@ class MainGUI(object):
                     round(float(std_predict_alt), 7))
 
     def _quit(self):
-        root.quit()     # stops mainloop
+        root.quit()
 
+
+def main():
+    pass
 
 if __name__ == '__main__':
+    main()
     root = tk.Tk()
     interfaz = MainGUI()
     root.title('Simulaciones')
