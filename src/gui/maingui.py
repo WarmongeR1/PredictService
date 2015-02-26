@@ -27,19 +27,12 @@ else:
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
-    NavigationToolbar2TkAgg
+    NavigationToolbar2TkAgg, os
 
 
 class MainGUI(object):
-
     def __init__(self, view, tle_file, data_folder, base_checker_type):
         self.index = 0
-        self.cur_sat = ''
-        self.index_pyephem = 0
-        self.index_predict = 0
-        self.index_pyorbital = 0
-        self.index_stk = 0
-        self.index_orbitron = 0
         self.data_folder = data_folder
         self.list_of_simulations = []
 
@@ -51,7 +44,7 @@ class MainGUI(object):
                 'name': 'pyephem',
                 'reader': PyEphemReader,
                 'checker': PyEphemChecker,
-                'index': self.index_pyephem,
+                'index': 0,
                 'plot_alt': None,
                 'plot_az': None,
                 'color': 'b',
@@ -62,7 +55,7 @@ class MainGUI(object):
                 'name': 'predict',
                 'reader': PredictReader,
                 'checker': PredictChecker,
-                'index': self.index_predict,
+                'index': 0,
                 'color': 'r',
                 'std_alt_value': None,
                 'std_az_value': None,
@@ -71,7 +64,7 @@ class MainGUI(object):
                 'name': 'orbitron',
                 'reader': OrbitronReader,
                 'checker': OrbitronChecker,
-                'index': self.index_orbitron,
+                'index': 0,
                 'plot_alt': None,
                 'plot_az': None,
                 'color': 'y',
@@ -82,7 +75,7 @@ class MainGUI(object):
                 'name': 'pyorbital',
                 'reader': PyOrbitalReader,
                 'checker': PyOrbitalChecker,
-                'index': self.index_pyorbital,
+                'index': 0,
                 'plot_alt': None,
                 'plot_az': None,
                 'color': 'm',
@@ -93,7 +86,7 @@ class MainGUI(object):
                 'name': 'STK',
                 'reader': STKReader,
                 'checker': STKChecker,
-                'index': self.index_stk,
+                'index': 0,
                 'plot_alt': None,
                 'plot_az': None,
                 'color': 'g',
@@ -106,6 +99,7 @@ class MainGUI(object):
 
         generate_temp_files(self.tle_file, self.data_folder)
         self.length = get_cnt_satellites(self.data_folder) - 1
+        self.cur_sat = get_name(self.index, self.data_folder)
 
         # self.widgets()
         self._init_view()
@@ -264,7 +258,7 @@ class MainGUI(object):
         file_name.grid(column=0, row=1, columnspan=1, rowspan=1, sticky=tk.W)
 
         self.file_name = tk.StringVar()
-        self.file_name.set(self.tle_file)
+        self.file_name.set(os.path.basename(self.tle_file))
 
         file_ = tk.Label(self.data_frame, textvariable=self.file_name)
         file_.grid(column=1, row=1, columnspan=1, rowspan=1, sticky=tk.E)
@@ -394,38 +388,33 @@ class MainGUI(object):
         self.pb_next = tk.Button(
             master=control_frame,
             text='Next',
-            command=self.next)
+            command=self.action_next)
         self.pb_next.grid(column=0, row=0, columnspan=1, rowspan=1)
 
         self.pb_forward = tk.Button(
             master=control_frame,
             text='Forward',
-            command=self.forward)
+            command=self.action_forward)
         self.pb_forward.grid(column=1, row=0, columnspan=1, rowspan=1)
 
         button = tk.Button(
             master=control_frame,
             text='Quit',
-            command=self._quit)
+            command=self.action_quit)
         button.grid(column=2, row=0, columnspan=1, rowspan=1, sticky=tk.E)
 
         # Check buttons state
-        if self.index == 0:
-            self.pb_forward.configure(state=tk.DISABLED)
-            self.pb_next.configure(state=tk.NORMAL)
-        elif self.index == self.length:
-            self.pb_forward.configure(state=tk.NORMAL)
-            self.pb_next.configure(state=tk.DISABLED)
-        else:
-            self.pb_forward.configure(state=tk.NORMAL)
-            self.pb_next.configure(state=tk.NORMAL)
+        self._check_buttons()
 
-    def _step_action(self):
+    def _step_action(self, next=True):
         self.cur_sat = get_name(self.index, self.data_folder)
         for program in self.progs:
             if program.get('checker')(program.get('index'), self.cur_sat,
                                       self.data_folder).get():
-                program['index'] = program.get('index') + 1
+                if next:
+                    program['index'] = program.get('index') + 1
+                else:
+                    program['index'] = program.get('index') - 1
 
         self.cur_sat = get_name(self.index, self.data_folder)
         self.text.set_text(self.cur_sat)
@@ -435,29 +424,17 @@ class MainGUI(object):
         for program in self.progs:
             if program.get('checker')(program.get('index'), self.cur_sat,
                                       self.data_folder).get():
-                data = program.get('reader')(program.get('index'), self.cur_sat,
-                                             self.data_folder)
+                data = program.get('reader')(self.data_folder,
+                                             program.get('index'),
+                                             self.cur_sat)
 
                 program.get('plot_alt').set_xdata(data.get_sim_time())
                 program.get('plot_alt').set_ydata(data.get_alts())
 
                 program.get('plot_az').set_xdata(data.get_sim_time())
-                program.get('plot_az').set_ydata(data.get_azs)
-        self.f.canvas.draw()
-
-        # Subplot c
-        self.c.clear()
-
-        # Check buttons state
-        if self.index == 0:
-            self.pb_forward.configure(state=tk.DISABLED)
-            self.pb_next.configure(state=tk.NORMAL)
-        elif self.index == self.length:
-            self.pb_forward.configure(state=tk.NORMAL)
-            self.pb_next.configure(state=tk.DISABLED)
-        else:
-            self.pb_forward.configure(state=tk.NORMAL)
-            self.pb_next.configure(state=tk.NORMAL)
+                program.get('plot_az').set_ydata(data.get_azs())
+                break
+        self._redraw()
 
     def _redraw(self):
         self.f.canvas.draw()
@@ -466,25 +443,16 @@ class MainGUI(object):
         self.c.clear()
 
         # Check buttons state
-        if self.index == 0:
-            self.pb_forward.configure(state=tk.DISABLED)
-            self.pb_next.configure(state=tk.NORMAL)
-        elif self.index == self.length:
-            self.pb_forward.configure(state=tk.NORMAL)
-            self.pb_next.configure(state=tk.DISABLED)
-        else:
-            self.pb_forward.configure(state=tk.NORMAL)
-            self.pb_next.configure(state=tk.NORMAL)
+        self._check_buttons()
 
-    def __next__(self):
+    def action_next(self):
         self.index += 1
-        self._step_action()
+        self._step_action(next=True)
         self._redraw()
 
-    def forward(self):
-
+    def action_forward(self):
         self.index -= 1
-        self._step_action()
+        self._step_action(next=False)
         self._redraw()
 
     def sims_available(self):
@@ -505,16 +473,18 @@ class MainGUI(object):
         self.list_of_simulations = list_of_simulations
 
     def pick_simulation(self, index):
+        base_index = self.get_prog_info(self.base_checker_type).get('index')
         for program in self.progs:
             if program.get('name') in self.list_of_simulations[index]:
                 flag_alt = 'Altitude' in self.list_of_simulations[index]
                 flag_az = 'Azimuth' in self.list_of_simulations[index]
 
                 if flag_alt or flag_az:
-                    time, list_alt, list_az = compare(program.get('name'),
-                                                      self.index_stk,
-                                                      program.get('index'),
-                                                      self.data_folder)
+                    time, list_alt, list_az = \
+                        compare(program.get('name'),
+                                base_index,
+                                program.get('index'),
+                                self.data_folder)
                     self.c.clear()
 
                     if flag_alt:
@@ -548,6 +518,7 @@ class MainGUI(object):
                 ' Family %s' % self.tle_file,
                 '==================================']
 
+        base_index = self.get_prog_info(self.base_checker_type).get('index')
         base_comp = self.get_base_checker().get()
 
         for i in range(self.length):
@@ -560,7 +531,7 @@ class MainGUI(object):
                 for program in self.progs:
                     if program.get('name') != self.base_checker_type:
                         std_predict_alt, std_predict_az = compare(
-                            self.index_stk, program.get('index'),
+                            base_index, program.get('index'),
                             self.data_folder, False)
 
                         std_predict_alt = round(float(std_predict_alt), 7)
@@ -578,10 +549,11 @@ class MainGUI(object):
         return text
 
     def std_simulations(self):
+        base_index = self.get_prog_info(self.base_checker_type).get('index')
         for program in self.progs:
             if program.get('name') != self.base_checker_type:
                 std_predict_alt, std_predict_az = compare(
-                    program.get('name'), self.index_stk, program.get('index'),
+                    program.get('name'), base_index, program.get('index'),
                     self.data_folder
                 )
                 program.get('std_alt_value').set(
@@ -589,5 +561,16 @@ class MainGUI(object):
                 program.get('std_az_value').set(
                     round(float(std_predict_alt), 7))
 
-    def _quit(self):
+    def action_quit(self):
         self.view.quit()
+
+    def _check_buttons(self):
+        if self.index == 0:
+            self.pb_forward.configure(state=tk.DISABLED)
+            self.pb_next.configure(state=tk.NORMAL)
+        elif self.index == self.length:
+            self.pb_forward.configure(state=tk.NORMAL)
+            self.pb_next.configure(state=tk.DISABLED)
+        else:
+            self.pb_forward.configure(state=tk.NORMAL)
+            self.pb_next.configure(state=tk.NORMAL)

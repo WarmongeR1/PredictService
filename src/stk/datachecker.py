@@ -12,10 +12,8 @@ class DataChecker(BaseDataChecker):
         data_folder = os.path.join(folder, self.checker_name)
         super().__init__(index_satellite, sat_name, data_folder)
 
-
     def check(self, index, satellite_name=''):
         if index < len(listdir(self.data_folder)) - 1:  # minus temp file
             self.result = True
         else:
             self.result = False
-

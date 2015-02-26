@@ -8,15 +8,15 @@ from src.utils.common import local_to_unix
 
 class DataReader(BaseDataReader):
 
-    def __init__(self, data_folder, sat_selected):
-        super().__init__(data_folder, sat_selected)
+    def __init__(self, data_folder, index_satellite, *args):
+        super().__init__(*args)
 
         self.lineas_validas = []
         self.satellite_name = None
         self.reader_name = 'orbitron'
         self.data_folder = os.path.join(data_folder, self.reader_name)
         self.files = []
-        self.open_file(sat_selected)
+        self.open_file(args[0])
 
     def open_file(self, sat_name):
         filepath = os.path.join(self.data_folder, '/output.txt')

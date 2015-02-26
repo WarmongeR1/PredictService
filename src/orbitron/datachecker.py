@@ -11,7 +11,6 @@ class DataChecker(BaseDataChecker):
         data_folder = os.path.join(folder, self.checker_name)
         super().__init__(index_satellite, sat_name, data_folder)
 
-
     def check(self, index, sat_name):
 
         file = os.path.join(self.data_folder, 'output.txt')
@@ -45,4 +44,3 @@ class DataChecker(BaseDataChecker):
         # File not available
         except IOError:
             self.result = False
-

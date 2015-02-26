@@ -33,7 +33,7 @@ def get_cnt_lines_in_file(filepath):
 def read_file(filepath):
     try:
         with open(filepath, 'r') as fi:
-            return [item.rstrip('\n') for item in fi.readlines()]
+            return [item.strip() for item in fi.readlines()]
     except FileNotFoundError:
         create_dir(os.path.dirname(filepath))
         open(filepath, 'w').close()

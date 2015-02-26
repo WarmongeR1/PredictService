@@ -12,7 +12,6 @@ class DataChecker(BaseDataChecker):
         data_folder = os.path.join(folder, self.checker_name)
         super().__init__(index_satellite, sat_name, data_folder)
 
-
     def check(self, index, satellite_name=''):
         sat_name = 'SAT%s' % (index + 1)
 

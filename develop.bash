@@ -1,19 +1,8 @@
 #!/bin/sh
 
+source ~/Develop/venv/propagator/bin/activate
+echo "PyEphem"
+python run_ephem.py -i bin/TLEs/dmc.txt -s '2015-01-01 18:21:26' -e '2015-01-02 18:21:26' -o ./bin/result/pyephem
 
-INSDIR='./bin'
-
-cp main.sh $INSDIR					# BASH script
-# Window routine
-cp output_data.py $INSDIR				# Output data to GUI
-cp gui.py $INSDIR						# UI
-cp configure_simulations.py $INSDIR	# Auxiliary UI
-cp scrolledlist.py $INSDIR			# List
-# Propagators
-cp pyephem_sims.py $INSDIR			# PyEphem script
-cp pyorbital_sims.py $INSDIR			# PyOrbital script
-cp predict_sims.sh $INSDIR			# predict script
-# Auxiliary scripts
-cp get_elements.py $INSDIR			# Get elements from TLE
-cp get_names.py $INSDIR				# Get satellite names from TLE file
-cp update_tles.sh $INSDIR				# Update TLE files from Celestrak
+echo "PyOrbital"
+python run_orbital.py -i bin/TLEs/dmc.txt -s '2015-01-01 18:21:26' -e '2015-01-02 18:21:26' -o ./bin/result/pyorbital

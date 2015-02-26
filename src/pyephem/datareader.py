@@ -7,8 +7,8 @@ from src.base.datareader import BaseDataReader
 
 class DataReader(BaseDataReader):
 
-    def __init__(self, data_folder, index_satellite):
-        super().__init__(data_folder, index_satellite)
+    def __init__(self, data_folder, index_satellite, *args):
+        super().__init__(*args)
 
         self.satellite_name = None
         self.reader_name = 'pyephem'

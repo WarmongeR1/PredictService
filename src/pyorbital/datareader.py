@@ -9,6 +9,7 @@ class DataReader(BaseDataReader):
 
     def __init__(self, data_folder, index_satellite, *args):
         super().__init__(*args)
+
         self.satellite_name = None
         self.files = []
         self.reader_name = 'pyorbital'

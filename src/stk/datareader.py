@@ -10,7 +10,6 @@ class DataReader(BaseDataReader):
 
     def __init__(self, data_folder, index_satellite, *args):
         super().__init__(*args)
-        index_satellite = index_satellite
 
         self.reader_name = 'stk'
         self.data_folder = os.path.join(data_folder, self.reader_name)
