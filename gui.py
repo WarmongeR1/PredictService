@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+import os
 import sys
 
 from src.gui.maingui import MainGUI
@@ -13,7 +14,7 @@ else:
 def main():
     from optparse import OptionParser
 
-    parser = OptionParser(usage='%prog: [options] [file]')
+    parser = OptionParser(usage='%prog: -i tle_file -f folder [options]')
     parser.add_option('-v', '--verbose', action='store_true')
     parser.add_option(
         '-i', '--tle_file', default=None,
@@ -24,17 +25,18 @@ def main():
 
     (options, args) = parser.parse_args()
 
-    if not (len(args) == 1 or options.url):
+    if options.tle_file is None or options.data_folder is None:
         parser.print_help()
         sys.exit(1)
 
-    if options.tle_file is None or options.data_folder:
-        root = tk.Tk()
-        interfaz = MainGUI(root, options.tle_file, options.data_folder, )
-        root.title('Simulaciones')
-        root.geometry('1010x620')
-        root.resizable(0, 0)
-        root.mainloop()
+    root = tk.Tk()
+    interfaz = MainGUI(root, os.path.abspath(options.tle_file),
+                       os.path.abspath(options.data_folder),
+                       'pyephem')
+    root.title('Simulaciones')
+    root.geometry('1010x620')
+    root.resizable(0, 0)
+    root.mainloop()
 
 
 if __name__ == '__main__':

@@ -25,8 +25,8 @@ DIR=$(pwd)
 sudo apt-get update
 sudo apt-get upgrade
 
-sudo apt-get install build-essential -y
-sudo apt-get install python-dev -y
+sudo apt-get install build-essential python-dev -y
+
 
 # it seems that wine could give problems in 64 bits architectures
 # must correct that issue
@@ -53,8 +53,7 @@ rm orbitron.exe
 
 # Python libraries.
 echo "Python libraries"	 
-sudo apt-get install python-pip -y
-sudo apt-get install python-matplotlib -y
+sudo apt-get install python-pip tk-dev tk python-matplotlib -y
 sudo pip install pyephem
 sudo pip install pyorbital
 
