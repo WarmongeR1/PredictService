@@ -13,9 +13,12 @@ class DataChecker(BaseDataChecker):
         super().__init__(index_satellite, sat_name, data_folder)
 
     def check(self, index, satellite_name=''):
-        files = listdir(self.data_folder)
-
-        if satellite_name in files:
-            self.result = True
-        else:
+        if not os.path.exists(self.data_folder):
             self.result = False
+        else:
+            files = listdir(self.data_folder)
+
+            if satellite_name in files:
+                self.result = True
+            else:
+                self.result = False

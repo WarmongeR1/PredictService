@@ -65,9 +65,9 @@ def generate_temp_files(tle_filepath, data_folder):
 
     for programm in PROGRAMMS:
         filepath = os.path.join(data_folder, programm, 'temp')
-        create_dir(os.path.dirname(filepath))
-        with open(filepath, 'w') as fi:
-            fi.writelines(['%s\n' % item for item in satellites_list])
+        if os.path.exists(os.path.dirname(filepath)):
+            with open(filepath, 'w') as fi:
+                fi.writelines(['%s\n' % item for item in satellites_list])
 
 
 def get_names(data_folder):
@@ -77,12 +77,13 @@ def get_names(data_folder):
     for programm in PROGRAMMS:
         filepath = os.path.join(data_folder, programm, 'temp')
         if os.path.exists(filepath):
-            result = get_satellite_names(filepath)
+            result = read_file(filepath)
             break
         else:
             continue
     else:
         raise Exception('Not found results in folder %s' % data_folder)
+
     return result
 
 

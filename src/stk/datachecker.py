@@ -13,7 +13,10 @@ class DataChecker(BaseDataChecker):
         super().__init__(index_satellite, sat_name, data_folder)
 
     def check(self, index, satellite_name=''):
-        if index < len(listdir(self.data_folder)) - 1:  # minus temp file
-            self.result = True
+        if os.path.exists(self.data_folder):
+            if index < len(listdir(self.data_folder)) - 1:  # minus temp file
+                self.result = True
+            else:
+                self.result = False
         else:
             self.result = False

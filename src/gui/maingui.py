@@ -105,14 +105,14 @@ class MainGUI(object):
         self._init_view()
 
     def get_base_checker(self, sat_name=None):
-        program = self.get_prog_info(self.base_checker_type)
+        program = self.get_program_info(self.base_checker_type)
         base_checker = program.get(
             'checker')
         if sat_name is None:
             sat_name = self.cur_sat
         return base_checker(program.get('index'), sat_name, self.data_folder)
 
-    def get_prog_info(self, name):
+    def get_program_info(self, name):
         result = None
         for program in self.progs:
             if program.get('name') == name:
@@ -406,12 +406,12 @@ class MainGUI(object):
         # Check buttons state
         self._check_buttons()
 
-    def _step_action(self, next=True):
+    def _step_action(self, is_next=True):
         self.cur_sat = get_name(self.index, self.data_folder)
         for program in self.progs:
             if program.get('checker')(program.get('index'), self.cur_sat,
                                       self.data_folder).get():
-                if next:
+                if is_next:
                     program['index'] = program.get('index') + 1
                 else:
                     program['index'] = program.get('index') - 1
@@ -447,12 +447,12 @@ class MainGUI(object):
 
     def action_next(self):
         self.index += 1
-        self._step_action(next=True)
+        self._step_action(is_next=True)
         self._redraw()
 
     def action_forward(self):
         self.index -= 1
-        self._step_action(next=False)
+        self._step_action(is_next=False)
         self._redraw()
 
     def sims_available(self):
@@ -473,7 +473,7 @@ class MainGUI(object):
         self.list_of_simulations = list_of_simulations
 
     def pick_simulation(self, index):
-        base_index = self.get_prog_info(self.base_checker_type).get('index')
+        base_index = self.get_program_info(self.base_checker_type).get('index')
         for program in self.progs:
             if program.get('name') in self.list_of_simulations[index]:
                 flag_alt = 'Altitude' in self.list_of_simulations[index]
@@ -518,7 +518,7 @@ class MainGUI(object):
                 ' Family %s' % self.tle_file,
                 '==================================']
 
-        base_index = self.get_prog_info(self.base_checker_type).get('index')
+        base_index = self.get_program_info(self.base_checker_type).get('index')
         base_comp = self.get_base_checker().get()
 
         for i in range(self.length):
@@ -549,7 +549,7 @@ class MainGUI(object):
         return text
 
     def std_simulations(self):
-        base_index = self.get_prog_info(self.base_checker_type).get('index')
+        base_index = self.get_program_info(self.base_checker_type).get('index')
         for program in self.progs:
             if program.get('name') != self.base_checker_type:
                 std_predict_alt, std_predict_az = compare(
