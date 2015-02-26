@@ -8,9 +8,10 @@ from src.base.datachecker import BaseDataChecker
 class DataChecker(BaseDataChecker):
 
     def __init__(self, index_satellite, sat_name, folder):
-        super().__init__(index_satellite, sat_name, folder)
         self.checker_name = 'pyorbital'
-        self.data_folder = os.path.join(self.data_folder, self.checker_name)
+        data_folder = os.path.join(folder, self.checker_name)
+        super().__init__(index_satellite, sat_name, data_folder)
+
 
     def check(self, index, satellite_name=''):
         sat_name = 'SAT%s' % (index + 1)
@@ -21,4 +22,4 @@ class DataChecker(BaseDataChecker):
             self.result = True
         else:
             self.result = False
-        return self.get()
+

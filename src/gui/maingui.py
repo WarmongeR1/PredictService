@@ -3,7 +3,7 @@
 import sys
 
 from src.gui import scrolledlist
-from src.utils.common import get_cnt_satellites, get_name
+from src.utils.common import get_cnt_satellites, get_name, generate_temp_files
 from src.predict.datareader import DataReader as PredictReader
 from src.pyephem.datareader import DataReader as PyEphemReader
 from src.pyorbital.datareader import DataReader as PyOrbitalReader
@@ -48,7 +48,7 @@ class MainGUI(object):
 
         self.progs = [
             {
-                'name': 'PyEphem',
+                'name': 'pyephem',
                 'reader': PyEphemReader,
                 'checker': PyEphemChecker,
                 'index': self.index_pyephem,
@@ -104,6 +104,7 @@ class MainGUI(object):
         ]
         self.base_checker_type = base_checker_type
 
+        generate_temp_files(self.tle_file, self.data_folder)
         self.length = get_cnt_satellites(self.data_folder) - 1
 
         # self.widgets()
@@ -130,6 +131,7 @@ class MainGUI(object):
         self._init_legend()
         self._init_canvas()
         self._init_comparation_plot()
+        self._init_data_frame()
         self._init_labels()
         self._init_control_frame()
 
@@ -171,7 +173,7 @@ class MainGUI(object):
 
         for program in self.progs:
             if program.get('checker')(program.get('index'), self.cur_sat,
-                                      self.data_folder):
+                                      self.data_folder).get():
                 data = program.get('reader')(self.data_folder,
                                              program.get('index'))
                 alt_plot, = self.plot_altitude.plot(
@@ -240,7 +242,7 @@ class MainGUI(object):
 
         self.text_name = tk.StringVar()
         object_name = get_name(self.index, self.data_folder)
-        self.text_name.set(object_name.name)
+        self.text_name.set(object_name)
 
         name = tk.Label(self.data_frame, textvariable=self.text_name)
         name.grid(column=1, row=0, columnspan=1, rowspan=1, sticky=tk.E)
@@ -389,17 +391,17 @@ class MainGUI(object):
         control_frame.columnconfigure(1, minsize=40)
         control_frame.columnconfigure(2, minsize=350)
 
-        self.next = tk.Button(
+        self.pb_next = tk.Button(
             master=control_frame,
             text='Next',
             command=self.next)
-        self.next.grid(column=0, row=0, columnspan=1, rowspan=1)
+        self.pb_next.grid(column=0, row=0, columnspan=1, rowspan=1)
 
-        self.forward = tk.Button(
+        self.pb_forward = tk.Button(
             master=control_frame,
             text='Forward',
             command=self.forward)
-        self.forward.grid(column=1, row=0, columnspan=1, rowspan=1)
+        self.pb_forward.grid(column=1, row=0, columnspan=1, rowspan=1)
 
         button = tk.Button(
             master=control_frame,
@@ -409,20 +411,20 @@ class MainGUI(object):
 
         # Check buttons state
         if self.index == 0:
-            self.forward.configure(state=tk.DISABLED)
-            self.next.configure(state=tk.NORMAL)
+            self.pb_forward.configure(state=tk.DISABLED)
+            self.pb_next.configure(state=tk.NORMAL)
         elif self.index == self.length:
-            self.forward.configure(state=tk.NORMAL)
-            self.next.configure(state=tk.DISABLED)
+            self.pb_forward.configure(state=tk.NORMAL)
+            self.pb_next.configure(state=tk.DISABLED)
         else:
-            self.forward.configure(state=tk.NORMAL)
-            self.next.configure(state=tk.NORMAL)
+            self.pb_forward.configure(state=tk.NORMAL)
+            self.pb_next.configure(state=tk.NORMAL)
 
     def _step_action(self):
         self.cur_sat = get_name(self.index, self.data_folder)
         for program in self.progs:
             if program.get('checker')(program.get('index'), self.cur_sat,
-                                      self.data_folder):
+                                      self.data_folder).get():
                 program['index'] = program.get('index') + 1
 
         self.cur_sat = get_name(self.index, self.data_folder)
@@ -432,7 +434,7 @@ class MainGUI(object):
 
         for program in self.progs:
             if program.get('checker')(program.get('index'), self.cur_sat,
-                                      self.data_folder):
+                                      self.data_folder).get():
                 data = program.get('reader')(program.get('index'), self.cur_sat,
                                              self.data_folder)
 
@@ -448,14 +450,14 @@ class MainGUI(object):
 
         # Check buttons state
         if self.index == 0:
-            self.forward.configure(state=tk.DISABLED)
-            self.next.configure(state=tk.NORMAL)
+            self.pb_forward.configure(state=tk.DISABLED)
+            self.pb_next.configure(state=tk.NORMAL)
         elif self.index == self.length:
-            self.forward.configure(state=tk.NORMAL)
-            self.next.configure(state=tk.DISABLED)
+            self.pb_forward.configure(state=tk.NORMAL)
+            self.pb_next.configure(state=tk.DISABLED)
         else:
-            self.forward.configure(state=tk.NORMAL)
-            self.next.configure(state=tk.NORMAL)
+            self.pb_forward.configure(state=tk.NORMAL)
+            self.pb_next.configure(state=tk.NORMAL)
 
     def _redraw(self):
         self.f.canvas.draw()
@@ -465,14 +467,14 @@ class MainGUI(object):
 
         # Check buttons state
         if self.index == 0:
-            self.forward.configure(state=tk.DISABLED)
-            self.next.configure(state=tk.NORMAL)
+            self.pb_forward.configure(state=tk.DISABLED)
+            self.pb_next.configure(state=tk.NORMAL)
         elif self.index == self.length:
-            self.forward.configure(state=tk.NORMAL)
-            self.next.configure(state=tk.DISABLED)
+            self.pb_forward.configure(state=tk.NORMAL)
+            self.pb_next.configure(state=tk.DISABLED)
         else:
-            self.forward.configure(state=tk.NORMAL)
-            self.next.configure(state=tk.NORMAL)
+            self.pb_forward.configure(state=tk.NORMAL)
+            self.pb_next.configure(state=tk.NORMAL)
 
     def __next__(self):
         self.index += 1
@@ -486,7 +488,7 @@ class MainGUI(object):
         self._redraw()
 
     def sims_available(self):
-        base_comp = self.get_base_checker().check()
+        base_comp = self.get_base_checker().get()
         list_of_simulations = []
 
         if base_comp:
@@ -546,7 +548,7 @@ class MainGUI(object):
                 ' Family %s' % self.tle_file,
                 '==================================']
 
-        base_comp = self.get_base_checker().check()
+        base_comp = self.get_base_checker().get()
 
         for i in range(self.length):
 

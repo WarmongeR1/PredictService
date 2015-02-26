@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
 
 PROGRAMMS = [
-    'PyEphem',
+    'pyephem',
     'predict',
-    'PyOrbital',
-    'Orbitron'
+    'pyorbital',
+    'orbitron',
+    'stk'
 ]

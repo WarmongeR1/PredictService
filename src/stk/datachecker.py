@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import os
+from os import listdir
 
 from src.base.datachecker import BaseDataChecker
 
@@ -7,15 +8,14 @@ from src.base.datachecker import BaseDataChecker
 class DataChecker(BaseDataChecker):
 
     def __init__(self, index_satellite, sat_name, folder):
-        super().__init__(index_satellite, sat_name, folder)
         self.checker_name = 'stk'
-        self.data_folder = os.path.join(self.data_folder, self.checker_name)
+        data_folder = os.path.join(folder, self.checker_name)
+        super().__init__(index_satellite, sat_name, data_folder)
+
 
     def check(self, index, satellite_name=''):
-        from os import listdir
-
-        if index < len(listdir(self.data_folder)):
+        if index < len(listdir(self.data_folder)) - 1:  # minus temp file
             self.result = True
         else:
             self.result = False
-        return self.get()
+

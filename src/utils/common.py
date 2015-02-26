@@ -21,6 +21,11 @@ def local_to_unix(year, month, day, hour, minute, second):
     return unix_time
 
 
+def create_dir(folder):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+
 def get_cnt_lines_in_file(filepath):
     return len(read_file(filepath))
 
@@ -29,7 +34,9 @@ def read_file(filepath):
     try:
         with open(filepath, 'r') as fi:
             return [item.rstrip('\n') for item in fi.readlines()]
-    except Exception:
+    except FileNotFoundError:
+        create_dir(os.path.dirname(filepath))
+        open(filepath, 'w').close()
         raise
 
 
@@ -58,16 +65,20 @@ def generate_temp_files(tle_filepath, data_folder):
 
     for programm in PROGRAMMS:
         filepath = os.path.join(data_folder, programm, 'temp')
+        create_dir(os.path.dirname(filepath))
         with open(filepath, 'w') as fi:
             fi.writelines(['%s\n' % item for item in satellites_list])
 
 
 def get_names(data_folder):
+    # hindi
+    # todo
     result = 0
     for programm in PROGRAMMS:
         filepath = os.path.join(data_folder, programm, 'temp')
         if os.path.exists(filepath):
-            result = get_cnt_lines_in_file(filepath)
+            result = get_satellite_names(filepath)
+            break
         else:
             continue
     else:
