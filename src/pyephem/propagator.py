@@ -22,6 +22,7 @@
 import os
 import math
 
+from dateconv import d2u
 import ephem
 
 from src.base.propagator import BasePropagator
@@ -62,9 +63,7 @@ class Propagator(BasePropagator):
         iterations = self.end_time - self.start_time
         iterations -= 1
 
-        n1 = (self.start_time + 2440587.5 * 86400) / 86400 - 2415020
-
-        self.observer.date = n1
+        self.observer.date = self.start_time
 
         satellite.compute(self.observer)
         alt1 = float(repr(satellite.alt))
@@ -80,17 +79,13 @@ class Propagator(BasePropagator):
             time = ephem.Date(self.observer.date + ephem.second)
             self.observer.date = time
 
-            # UNIX Time
-            UnixTimeN = float(time)
-            UnixTimeN = int((UnixTimeN - 25567.5) * 86400)
-
             satellite.compute(self.observer)
-            altN = float(repr(satellite.alt))
-            altN = math.degrees(altN)
-            azN = float(repr(satellite.az))
-            azN = math.degrees(azN)
-            if altN >= 0:
-                self.save(output_filepath, UnixTimeN, altN, azN)
+            alt = float(repr(satellite.alt))
+            alt = math.degrees(alt)
+            az = float(repr(satellite.az))
+            az = math.degrees(az)
+            if alt >= 0:
+                self.save(output_filepath, d2u(self.observer.date), alt, az)
 
     def gen_observer(self):
         observer = ephem.Observer()
