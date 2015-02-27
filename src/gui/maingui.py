@@ -280,7 +280,6 @@ class MainGUI(object):
         label_sims.grid(column=0, row=2, columnspan=2, rowspan=1, sticky=tk.W)
 
         # Generate data
-
         sims_availables = scrolledlist.ScrolledList(
             self.data_frame,
             width=16,

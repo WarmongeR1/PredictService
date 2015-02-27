@@ -73,11 +73,13 @@ def generate_temp_files(tle_filepath, data_folder):
 def get_names(data_folder):
     # hindi
     # todo
+    print()
     result = 0
     for programm in PROGRAMMS:
         filepath = os.path.join(data_folder, programm, 'temp')
         if os.path.exists(filepath):
             result = read_file(filepath)
+
             break
         else:
             continue
@@ -88,4 +90,4 @@ def get_names(data_folder):
 
 
 def get_name(index, data_folder):
-    return get_names(data_folder)[index]
+    return get_names(data_folder)[index - 1]

@@ -35,6 +35,7 @@ class DataReader(BaseDataReader):
             if satellite in self.files_STK[i]:
                 name = self.files_STK[i]
                 self.open_file(name)
+                break
 
     def open_file(self, name):
         with open(name, 'rb') as open_file:

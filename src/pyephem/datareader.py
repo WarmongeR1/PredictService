@@ -14,7 +14,6 @@ class DataReader(BaseDataReader):
         self.reader_name = 'pyephem'
         self.data_folder = os.path.join(data_folder, self.reader_name)
         self.files = []
-        index_satellite += 1
         self._open()
         self.open_files(index_satellite)
 
@@ -25,10 +24,8 @@ class DataReader(BaseDataReader):
         self.files.sort()
 
     def open_files(self, index_satellite):
-
-        for i in range(index_satellite):
-            self.open_file(self.files[i])
-            self.satellite_name = self.files[i]
+        self.open_file(self.files[index_satellite])
+        self.satellite_name = self.files[index_satellite]
 
     def open_file(self, name):
 

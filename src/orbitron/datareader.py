@@ -63,3 +63,4 @@ class DataReader(BaseDataReader):
                 self.simulation_time.append(int(unix_time))
                 self.az_satellite.append(float(az))
                 self.alt_satellite.append(float(alt))
+                break
