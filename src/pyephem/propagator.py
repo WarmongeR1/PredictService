@@ -21,8 +21,8 @@
 ##########################################################################
 import os
 import math
+from dateconv import u2d, d2u
 
-from dateconv import d2u
 import ephem
 
 from src.base.propagator import BasePropagator
@@ -56,36 +56,26 @@ class Propagator(BasePropagator):
         satellite.compute(self.observer)
         return satellite
 
+    def _step(self, satellite, time, output_filepath):
+        self.observer.date = time
+        satellite.compute(self.observer)
+        alt1 = math.degrees(satellite.alt)
+        az1 = math.degrees(satellite.az)
+        if alt1 >= 0:
+            self.save(output_filepath, d2u(time), alt1, az1)
+
     def predict(self, satellite_name, line1, line2, i):
 
         satellite = self.get_satellite(satellite_name, line1, line2)
 
-        iterations = self.end_time - self.start_time
-        iterations -= 1
-
-        self.observer.date = self.start_time
-
-        satellite.compute(self.observer)
-        alt1 = float(repr(satellite.alt))
-        alt1 = math.degrees(alt1)
-        az1 = float(repr(satellite.az))
-        az1 = math.degrees(az1)
         output_filepath = os.path.join(self.output_folder,
                                        satellite_name)
-        if alt1 >= 0:
-            self.save(output_filepath, self.start_time, alt1, az1)
+        cur_time = self.start_time
+        self._step(satellite, cur_time, output_filepath)
 
-        for j in range(iterations):
-            time = ephem.Date(self.observer.date + ephem.second)
-            self.observer.date = time
-
-            satellite.compute(self.observer)
-            alt = float(repr(satellite.alt))
-            alt = math.degrees(alt)
-            az = float(repr(satellite.az))
-            az = math.degrees(az)
-            if alt >= 0:
-                self.save(output_filepath, d2u(self.observer.date), alt, az)
+        while cur_time < self.end_time:
+            cur_time += 1
+            self._step(satellite, u2d(cur_time), output_filepath)
 
     def gen_observer(self):
         observer = ephem.Observer()

@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-import datetime
 import os
+from dateconv import d2u, u2d
 
 from pyorbital.orbital import Orbital
 
@@ -33,30 +33,23 @@ class Propagator(BasePropagator):
             line1=tle1,
             line2=tle2)
 
+    def _step(self, satellite, filepath, time):
+        lon, lat, ele = self.get_location()
+
+        az1, alt1 = satellite.get_observer_look(u2d(time), lon, lat, ele)
+
+        if alt1 > 0:
+            self.save(filepath, time, alt1, az1)
+
     def predict(self, satellite_name, line1, line2, i):
+        output_filepath = os.path.join(self.output_folder,
+                                       satellite_name)
 
         satellite = self.get_satellite(satellite_name, line1, line2)
 
-        iterations = self.end_time - self.start_time
-        iterations -= 1
+        cur_time = self.start_time
+        self._step(satellite, output_filepath, cur_time)
 
-        time1 = datetime.datetime.fromtimestamp(self.start_time)
-
-        (lon, lat, ele) = self.get_location()
-
-        az1, alt1 = satellite.get_observer_look(time1, lon, lat, ele)
-
-        output_filepath = os.path.join(self.output_folder,
-                                       satellite_name)
-        if alt1 > 0:
-            self.save(output_filepath, self.start_time, alt1, az1)
-
-        n2 = self.start_time
-
-        for j in range(iterations):
-            n2 += 1
-            timeN = datetime.datetime.fromtimestamp(n2)
-            azN, altN = satellite.get_observer_look(timeN, lon, lat, ele)
-
-            if altN > 0:
-                self.save(output_filepath, n2, altN, azN)
+        while cur_time < self.end_time:
+            cur_time += 1
+            self._step(satellite, output_filepath, cur_time)

@@ -48,7 +48,6 @@ class BasePropagator(object):
         for i in range(len(satellite_info[0])):
             self.predict(satellite_info[0][i], satellite_info[1][i],
                          satellite_info[2][i], i)
-            i = i + 1
             bar.update(i + 1)
 
         bar.finish()
