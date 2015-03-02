@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-
+import os
 import sys
 
 import ephem
@@ -82,10 +82,14 @@ class TLEReader(object):
 
     def get_location(self):
         # todo
-        # load from settings
-        lon = '-2.314722'
-        lat = '36.832778'
-        ele = 20
+        # вынести в нормальный конфиг
+        open_file = open(os.getenv('HOME') + '/.predict/predict.qth')
+        lines = open_file.readlines()
+        lines = [item.rstrip('\n') for item in lines]
+
+        lat = float(lines[1])
+        lon = float(lines[2])
+        ele = int(lines[3])
 
         return lon, lat, ele
 
