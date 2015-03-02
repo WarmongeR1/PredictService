@@ -77,7 +77,12 @@ class Propagator(BasePropagator):
                     # phase = info[5]
                     # lat = info[6]
                     # lon = info[7]
-                    sat_file.write("%s\t%s\t%s\n" % (time, elevation, azimuth))
+                    try:
+                        if int(elevation) >= 0:
+                            sat_file.write(
+                                "%s\t%s\t%s\n" % (time, elevation, azimuth))
+                    except TypeError:
+                        pass
         finally:
             os.remove(filename)
             sat_file.close()
