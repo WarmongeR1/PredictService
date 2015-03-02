@@ -21,10 +21,11 @@
 ##########################################################################
 import math
 import os
+import time
 
 import ephem
+from dateconv import h2d, h2u, u2h, d2u
 
-from dateconv import d2u, h2d, u2d
 from src.base.propagator import BasePropagator
 
 
@@ -42,12 +43,16 @@ class Propagator(BasePropagator):
         :param end_time:  human time, example '2015-01-01 18:21:26'
         :return:
         """
+        start_time = time.strftime("%Y-%m-%d %H:%M:%S",
+                                   time.gmtime(h2u(start_time,
+                                                   view='%Y-%m-%d_%H:%M:%S')))
+        end_time = time.strftime("%Y-%m-%d %H:%M:%S",
+                                 time.gmtime(
+                                     h2u(end_time, view='%Y-%m-%d_%H:%M:%S')))
 
         super(Propagator, self).__init__(output_folder,
-                                         h2d(start_time,
-                                             view='%Y-%m-%d_%H:%M:%S'),
-                                         h2d(end_time,
-                                             view='%Y-%m-%d_%H:%M:%S'))
+                                         h2d(start_time),
+                                         h2d(end_time))
 
         self.satellites_number = len(satellite_info[0])
         self.observer = self.gen_observer()
@@ -60,12 +65,13 @@ class Propagator(BasePropagator):
         return satellite
 
     def _step(self, satellite, time, output_filepath):
-        self.observer.date = time
+        self.observer.date = u2h(time)
         satellite.compute(self.observer)
         alt1 = math.degrees(satellite.alt)
         az1 = math.degrees(satellite.az)
         if alt1 >= 0:
-            self.save(output_filepath, d2u(ephem.localtime(self.observer.date)),
+            self.save(output_filepath,
+                      d2u(ephem.localtime(ephem.Date(u2h(time)))),
                       alt1, az1)
 
     def predict(self, satellite_name, line1, line2, i):
@@ -79,7 +85,7 @@ class Propagator(BasePropagator):
 
         while cur_time < self.end_time:
             cur_time += 1
-            self._step(satellite, u2d(cur_time), output_filepath)
+            self._step(satellite, cur_time, output_filepath)
 
     def gen_observer(self):
         observer = ephem.Observer()

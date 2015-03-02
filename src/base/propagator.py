@@ -66,15 +66,18 @@ class BasePropagator(object):
 
         return lon, lat, ele
 
-    def create(self, folder):
+    @staticmethod
+    def create(folder):
         if not os.path.exists(folder):
             os.makedirs(folder)
 
-    def remove(self, output_filepath):
+    @staticmethod
+    def remove(output_filepath):
         if os.path.exists(output_filepath):
             os.remove(output_filepath)
 
-    def save(self, output_filepath, time, alt, az):
+    @staticmethod
+    def save(output_filepath, time, alt, az):
         with open(output_filepath, 'a') as file:
             file.writelines('%d\t' % time)
             file.writelines('%0.6f\t' % alt)
