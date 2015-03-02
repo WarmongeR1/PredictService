@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 from src.base.comparator import BaseComparator
-from src.orbitron.datareader import DataReader as SecondReader
-from src.pyephem.datareader import DataReader as FirstReader
+from src.predictors.orbitron.datareader import DataReader as SecondReader
+from src.predictors.pyephem.datareader import DataReader as FirstReader
 
 
 class Comparator(BaseComparator):

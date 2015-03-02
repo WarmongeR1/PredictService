@@ -10,7 +10,7 @@ def compare(direct, index_first, index_second, folder, deviation=True):
     comparators = {
         'predict': Predict,
         'stk': STK,
-        'pyorbital': PyOrbital,
+        'from src.predictors.pyorbital': PyOrbital,
         'orbitron': Orbitron,
     }
     comparator = comparators.get(direct)(folder, index_first, index_second)

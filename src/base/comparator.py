@@ -52,8 +52,6 @@ class BaseComparator(object):
 
         time_intersected = list(
             set(self.first_times).intersection(self.second_times))
-        # todo
-        # времена расчетов не совпадают
         for i in range(len(time_intersected)):
             difference_alt = \
                 float(self.second_alts[

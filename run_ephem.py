@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import sys
 
-from src.pyephem.propagator import Propagator
+from src.predictors.pyephem.propagator import Propagator
 from src.utils.tlereader import TLEReader
 
 

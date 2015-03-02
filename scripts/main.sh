@@ -286,7 +286,7 @@ chmod +x predict_sims.sh
 # PyEphem data
 python pyephem_sims.py $FAMILY $DATE $END_TIME
 
-# pyorbital data
+# from src.predictors.pyorbital data
 python pyorbital_sims.py $FAMILY $DATE $END_TIME
 
 # Orbitron data

@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import sys
 
-from src.predict.propagator import Propagator
+from src.predictors.predict.propagator import Propagator
 from src.utils.tlereader import TLEReader
 
 

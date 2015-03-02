@@ -1,24 +1,26 @@
 # -*- encoding: utf-8 -*-
 
 import sys
+
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2TkAgg, os)
 from matplotlib.figure import Figure
 
 from src.comparators.comparator import compare
 from src.gui import scrolledlist
-from src.orbitron.datachecker import DataChecker as OrbitronChecker
-from src.orbitron.datareader import DataReader as OrbitronReader
-from src.predict.datachecker import DataChecker as PredictChecker
-from src.predict.datareader import DataReader as PredictReader
-from src.pyephem.datachecker import DataChecker as PyEphemChecker
-from src.pyephem.datareader import DataReader as PyEphemReader
-from src.pyorbital.datachecker import DataChecker as PyOrbitalChecker
-from src.pyorbital.datareader import DataReader as PyOrbitalReader
-from src.stk.datachecker import DataChecker as STKChecker
-from src.stk.datareader import DataReader as STKReader
+from src.predictors.orbitron.datachecker import DataChecker as OrbitronChecker
+from src.predictors.orbitron.datareader import DataReader as OrbitronReader
+from src.predictors.predict.datachecker import DataChecker as PredictChecker
+from src.predictors.predict.datareader import DataReader as PredictReader
+from src.predictors.pyephem.datachecker import DataChecker as PyEphemChecker
+from src.predictors.pyephem.datareader import DataReader as PyEphemReader
+from src.predictors.pyorbital.datachecker import DataChecker as PyOrbitalChecker
+from src.predictors.pyorbital.datareader import DataReader as PyOrbitalReader
+from src.predictors.stk.datachecker import DataChecker as STKChecker
+from src.predictors.stk.datareader import DataReader as STKReader
 from src.utils.common import generate_temp_files, get_cnt_satellites, get_name
 from src.utils.tlereader import TLEReader
+
 
 if sys.version < '3':
     from tkinter.filedialog import asksaveasfile
