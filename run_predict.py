@@ -1,12 +1,12 @@
 # -*- encoding: utf-8 -*-
 import sys
 
-from src.pyephem.propagator import Propagator
+from src.predict.propagator import Propagator
 from src.utils.tlereader import TLEReader
 
 
 """
-python run_ephem.py -i bin/TLEs/dmc.txt -s 2015-01-01_18:21:26 -e 2015-01-02_18:21:26 -o ./bin/result/pyephem
+python run_predict.py -i bin/TLEs/dmc.txt -s 2015-01-01_18:21:26 -e 2015-01-02_18:21:26 -o ./bin/result/predict
 """
 
 
