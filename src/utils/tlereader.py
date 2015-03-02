@@ -2,8 +2,8 @@
 
 import sys
 
-from ephem import Observer, degrees, now
 import ephem
+from ephem import Observer, degrees, now
 
 
 class TLEReader(object):

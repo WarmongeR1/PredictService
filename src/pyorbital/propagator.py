@@ -2,9 +2,9 @@
 
 import os
 
-from dateconv import u2d, h2d
 from pyorbital.orbital import Orbital
 
+from dateconv import h2d, u2d
 from src.base.propagator import BasePropagator
 
 

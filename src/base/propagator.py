@@ -2,11 +2,12 @@
 import datetime
 import os
 
-from dateconv import d2u
 import progressbar
+from dateconv import d2u
 
 
 class BasePropagator(object):
+
     def __init__(self,
                  output_folder,
                  start_time=None,

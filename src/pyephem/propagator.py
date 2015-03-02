@@ -19,12 +19,12 @@
 ##########################################################################
 # Author: sapronov.alexander92[at]gmail.com
 ##########################################################################
-import os
 import math
+import os
 
-from dateconv import u2d, d2u, h2d
 import ephem
 
+from dateconv import d2u, h2d, u2d
 from src.base.propagator import BasePropagator
 
 

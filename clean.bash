@@ -4,3 +4,4 @@
 #autoflake --in-place --remove-all-unused-imports --remove-unused-variables -r ./
 
 pyformat -r -a -i -j 4 ./
+isort -rc --atomic .

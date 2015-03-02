@@ -1,8 +1,6 @@
 # -*- encoding: utf-8 -*-
-import os
+
 from src.base.comparator import BaseComparator
-
-
 from src.pyephem.datareader import DataReader as FirstReader
 from src.pyorbital.datareader import DataReader as SecondReader
 

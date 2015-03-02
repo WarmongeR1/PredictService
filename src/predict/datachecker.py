@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
-from os import listdir
 import os
+from os import listdir
 
 from src.base.datachecker import BaseDataChecker
 

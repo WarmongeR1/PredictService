@@ -1,20 +1,23 @@
 # -*- encoding: utf-8 -*-
 
 import sys
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
+                                               NavigationToolbar2TkAgg, os)
+from matplotlib.figure import Figure
 
-from src.gui import scrolledlist
-from src.utils.common import get_cnt_satellites, get_name, generate_temp_files
-from src.predict.datareader import DataReader as PredictReader
-from src.pyephem.datareader import DataReader as PyEphemReader
-from src.pyorbital.datareader import DataReader as PyOrbitalReader
-from src.orbitron.datareader import DataReader as OrbitronReader
-from src.stk.datareader import DataReader as STKReader
-from src.predict.datachecker import DataChecker as PredictChecker
-from src.pyephem.datachecker import DataChecker as PyEphemChecker
-from src.pyorbital.datachecker import DataChecker as PyOrbitalChecker
-from src.orbitron.datachecker import DataChecker as OrbitronChecker
-from src.stk.datachecker import DataChecker as STKChecker
 from src.comparators.comparator import compare
+from src.gui import scrolledlist
+from src.orbitron.datachecker import DataChecker as OrbitronChecker
+from src.orbitron.datareader import DataReader as OrbitronReader
+from src.predict.datachecker import DataChecker as PredictChecker
+from src.predict.datareader import DataReader as PredictReader
+from src.pyephem.datachecker import DataChecker as PyEphemChecker
+from src.pyephem.datareader import DataReader as PyEphemReader
+from src.pyorbital.datachecker import DataChecker as PyOrbitalChecker
+from src.pyorbital.datareader import DataReader as PyOrbitalReader
+from src.stk.datachecker import DataChecker as STKChecker
+from src.stk.datareader import DataReader as STKReader
+from src.utils.common import generate_temp_files, get_cnt_satellites, get_name
 from src.utils.tlereader import TLEReader
 
 if sys.version < '3':
@@ -25,12 +28,9 @@ else:
     from tkinter.filedialog import asksaveasfile
     import tkinter as tk
 
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
-    NavigationToolbar2TkAgg, os
-
 
 class MainGUI(object):
+
     def __init__(self, view, tle_file, data_folder, base_checker_type):
         self.index = 0
         self.data_folder = data_folder

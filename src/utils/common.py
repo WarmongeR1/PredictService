@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
-from datetime import datetime
 import os
 import sys
+from datetime import datetime
 
 from settings import PROGRAMMS
 

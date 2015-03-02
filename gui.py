@@ -4,7 +4,6 @@ import sys
 
 from src.gui.maingui import MainGUI
 
-
 if sys.version < '3':
     import tkinter as tk
 else:

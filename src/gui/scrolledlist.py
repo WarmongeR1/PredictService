@@ -7,6 +7,7 @@
 """
 
 import sys
+
 if sys.version < '3':
     from tkinter import *
 else:

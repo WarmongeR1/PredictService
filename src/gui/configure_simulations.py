@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
 
-from os import listdir
 import sys
+from os import listdir
 
 from src.gui import scrolledlist
+from src.gui.scrolledlist import ScrolledList
 
 if sys.version < '3':
     import tkinter as tk
@@ -11,8 +12,6 @@ if sys.version < '3':
 else:
     import tkinter as tk
     from tkinter import LabelFrame, Radiobutton, LabelFrame
-
-from src.gui.scrolledlist import ScrolledList
 
 
 class Window(object):

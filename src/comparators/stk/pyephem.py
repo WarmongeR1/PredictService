@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
-import os
-from src.base.comparator import BaseComparator
 
+from src.base.comparator import BaseComparator
 from src.pyephem.datareader import DataReader as SecondReader
 from src.stk.datareader import DataReader as FirstReader
 
