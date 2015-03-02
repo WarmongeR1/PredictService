@@ -24,7 +24,7 @@ import os
 import time
 
 import ephem
-from dateconv import h2d, h2u, u2h, d2u
+from dateconv import h2d, h2u, u2h, d2u, u2d, l2g, g2l
 
 from src.base.propagator import BasePropagator
 
@@ -39,20 +39,16 @@ class Propagator(BasePropagator):
 
         :param satellite_info: tuple with 3 elements (element = list)
         :param output_folder:  string
-        :param start_time:  human time, example '2015-01-01 18:21:26'
-        :param end_time:  human time, example '2015-01-01 18:21:26'
+        :param start_time:  human time, example '2015-01-01_18:21:26'
+        :param end_time:  human time, example '2015-01-01_18:21:26'
         :return:
         """
-        start_time = time.strftime("%Y-%m-%d %H:%M:%S",
-                                   time.gmtime(h2u(start_time,
-                                                   view='%Y-%m-%d_%H:%M:%S')))
-        end_time = time.strftime("%Y-%m-%d %H:%M:%S",
-                                 time.gmtime(
-                                     h2u(end_time, view='%Y-%m-%d_%H:%M:%S')))
+        start_time = u2d(l2g(start_time, view='%Y-%m-%d_%H:%M:%S'))
+        end_time = u2d(l2g(end_time, view='%Y-%m-%d_%H:%M:%S'))
 
         super(Propagator, self).__init__(output_folder,
-                                         h2d(start_time),
-                                         h2d(end_time))
+                                         start_time,
+                                         end_time)
 
         self.satellites_number = len(satellite_info[0])
         self.observer = self.gen_observer()
@@ -70,8 +66,7 @@ class Propagator(BasePropagator):
         alt1 = math.degrees(satellite.alt)
         az1 = math.degrees(satellite.az)
         if alt1 >= 0:
-            self.save(output_filepath,
-                      d2u(ephem.localtime(ephem.Date(u2h(time)))),
+            self.save(output_filepath, g2l(time),
                       alt1, az1)
 
     def predict(self, satellite_name, line1, line2, i):

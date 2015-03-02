@@ -3,3 +3,6 @@ matplotlib
 pyorbital
 
 git+https://github.com/WarmongeR1/python-progressbar.git
+
+#python-dateconv
+git+https://github.com/WarmongeR1/python-dateconv.git

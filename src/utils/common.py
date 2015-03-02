@@ -63,8 +63,8 @@ def get_satellite_names(filepath):
 def generate_temp_files(tle_filepath, data_folder):
     satellites_list = get_satellite_names(tle_filepath)
 
-    for programm in PROGRAMMS:
-        filepath = os.path.join(data_folder, programm, 'temp')
+    for program in PROGRAMMS:
+        filepath = os.path.join(data_folder, program, 'temp')
         if os.path.exists(os.path.dirname(filepath)):
             with open(filepath, 'w') as fi:
                 fi.writelines(['%s\n' % item for item in satellites_list])
@@ -73,10 +73,9 @@ def generate_temp_files(tle_filepath, data_folder):
 def get_names(data_folder):
     # hindi
     # todo
-    print()
     result = 0
-    for programm in PROGRAMMS:
-        filepath = os.path.join(data_folder, programm, 'temp')
+    for program in PROGRAMMS:
+        filepath = os.path.join(data_folder, program, 'temp')
         if os.path.exists(filepath):
             result = read_file(filepath)
 

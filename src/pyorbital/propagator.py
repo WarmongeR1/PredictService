@@ -3,8 +3,8 @@
 import os
 
 from pyorbital.orbital import Orbital
+from dateconv import u2d, l2g, g2l
 
-from dateconv import h2d, u2d
 from src.base.propagator import BasePropagator
 
 
@@ -22,14 +22,16 @@ class Propagator(BasePropagator):
         :param end_time:  datetime object
         :return:
         """
+        start_time = u2d(l2g(start_time, view='%Y-%m-%d_%H:%M:%S'))
+        end_time = u2d(l2g(end_time, view='%Y-%m-%d_%H:%M:%S'))
+
         super(Propagator, self).__init__(output_folder,
-                                         h2d(start_time,
-                                             view='%Y-%m-%d_%H:%M:%S'),
-                                         h2d(end_time,
-                                             view='%Y-%m-%d_%H:%M:%S'))
+                                         start_time,
+                                         end_time)
         self._predict(satellite_info)
 
-    def get_satellite(self, tle0, tle1, tle2):
+    @staticmethod
+    def get_satellite(tle0, tle1, tle2):
         return Orbital(
             tle0,
             line1=tle1,
@@ -41,7 +43,7 @@ class Propagator(BasePropagator):
         az1, alt1 = satellite.get_observer_look(u2d(time), lon, lat, ele)
 
         if alt1 > 0:
-            self.save(filepath, time, alt1, az1)
+            self.save(filepath, g2l(time), alt1, az1)
 
     def predict(self, satellite_name, line1, line2, i):
         output_filepath = os.path.join(self.output_folder,
