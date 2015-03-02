@@ -21,10 +21,9 @@
 ##########################################################################
 import math
 import os
-import time
 
 import ephem
-from dateconv import h2d, h2u, u2h, d2u, u2d, l2g, g2l
+from dateconv import d2u, g2l, h2d, h2u, l2g, u2d, u2h
 
 from src.base.propagator import BasePropagator
 

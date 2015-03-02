@@ -22,10 +22,10 @@ def main():
         help='Path to file with satellites tle')
     parser.add_option('-s', '--start_time', default=None,
                       help='Start time, as string '
-                           "(for example 2015-01-01_18:21:26)")
+                           '(for example 2015-01-01_18:21:26)')
     parser.add_option('-e', '--end_time', default=None,
                       help='End time, as string '
-                           "(for example 2015-01-01_18:21:26)")
+                           '(for example 2015-01-01_18:21:26)')
     (options, args) = parser.parse_args()
 
     if options.input_file is None:

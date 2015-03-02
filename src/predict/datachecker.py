@@ -22,4 +22,3 @@ class DataChecker(BaseDataChecker):
                 self.result = True
             else:
                 self.result = False
-

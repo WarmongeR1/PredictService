@@ -2,15 +2,16 @@
 
 import os
 import re
-import tempfile
 import subprocess
+import tempfile
 
-from dateconv import u2d, l2g
+from dateconv import l2g, u2d
 
 from src.base.propagator import BasePropagator
 
 
 class Propagator(BasePropagator):
+
     def __init__(self, satellite_info,
                  output_folder,
                  start_time=None,
@@ -35,8 +36,8 @@ class Propagator(BasePropagator):
         output_filepath = os.path.join(self.output_folder,
                                        satellite_name)
 
-        sat_name = "SAT"
-        sat_text = "{}\n{}\n{}\n".format(
+        sat_name = 'SAT'
+        sat_text = '{}\n{}\n{}\n'.format(
             sat_name,
             line1,
             line2
@@ -55,7 +56,7 @@ class Propagator(BasePropagator):
             f.write(sat_text)
             f.close()
 
-            command = "predict -t {} -f {} {} {} -o {}".format(
+            command = 'predict -t {} -f {} {} {} -o {}'.format(
                 filename,
                 sat_name,
                 self.start_time,
@@ -80,13 +81,10 @@ class Propagator(BasePropagator):
                     try:
                         if int(elevation) >= 0:
                             sat_file.write(
-                                "%s\t%s\t%s\n" % (time, elevation, azimuth))
+                                '%s\t%s\t%s\n' % (time, elevation, azimuth))
                     except TypeError:
                         pass
         finally:
             os.remove(filename)
             sat_file.close()
             os.remove(out_path)
-
-
-
