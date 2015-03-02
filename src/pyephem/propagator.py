@@ -21,8 +21,8 @@
 ##########################################################################
 import os
 import math
-from dateconv import u2d, d2u
 
+from dateconv import u2d, d2u, h2d
 import ephem
 
 from src.base.propagator import BasePropagator
@@ -44,7 +44,10 @@ class Propagator(BasePropagator):
         """
 
         super(Propagator, self).__init__(output_folder,
-                                         start_time, end_time)
+                                         h2d(start_time,
+                                             view='%Y-%m-%d_%H:%M:%S'),
+                                         h2d(end_time,
+                                             view='%Y-%m-%d_%H:%M:%S'))
 
         self.satellites_number = len(satellite_info[0])
         self.observer = self.gen_observer()
@@ -62,7 +65,8 @@ class Propagator(BasePropagator):
         alt1 = math.degrees(satellite.alt)
         az1 = math.degrees(satellite.az)
         if alt1 >= 0:
-            self.save(output_filepath, d2u(time), alt1, az1)
+            self.save(output_filepath, d2u(ephem.localtime(self.observer.date)),
+                      alt1, az1)
 
     def predict(self, satellite_name, line1, line2, i):
 

@@ -7,7 +7,6 @@ import progressbar
 
 
 class BasePropagator(object):
-
     def __init__(self,
                  output_folder,
                  start_time=None,
@@ -44,8 +43,9 @@ class BasePropagator(object):
         bar = progressbar.ProgressBar(maxval=len(satellite_info[0]))
         bar.start()
 
-        # Provide data to pyephem_routine
         for i in range(len(satellite_info[0])):
+            self.remove(os.path.join(self.output_folder,
+                                     satellite_info[0][i]))
             self.predict(satellite_info[0][i], satellite_info[1][i],
                          satellite_info[2][i], i)
             bar.update(i + 1)
@@ -68,6 +68,10 @@ class BasePropagator(object):
     def create(self, folder):
         if not os.path.exists(folder):
             os.makedirs(folder)
+
+    def remove(self, output_filepath):
+        if os.path.exists(output_filepath):
+            os.remove(output_filepath)
 
     def save(self, output_filepath, time, alt, az):
         with open(output_filepath, 'a') as file:

@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 import os
-from dateconv import d2u, u2d
 
+from dateconv import u2d, h2d
 from pyorbital.orbital import Orbital
 
 from src.base.propagator import BasePropagator
@@ -23,8 +23,10 @@ class Propagator(BasePropagator):
         :return:
         """
         super(Propagator, self).__init__(output_folder,
-                                         start_time, end_time)
-
+                                         h2d(start_time,
+                                             view='%Y-%m-%d_%H:%M:%S'),
+                                         h2d(end_time,
+                                             view='%Y-%m-%d_%H:%M:%S'))
         self._predict(satellite_info)
 
     def get_satellite(self, tle0, tle1, tle2):
